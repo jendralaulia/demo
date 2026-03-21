@@ -15,7 +15,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        body { font-family: 'Nunito', sans-serif; background-color: #064e3b; background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23047857' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Nunito', sans-serif; background-color: #064e3b; background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23047857' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); -webkit-tap-highlight-color: transparent; overflow: hidden; }
         .glass-panel { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); }
         .fade-in { animation: fadeIn 0.4s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
@@ -26,13 +26,29 @@
         .avatar-btn { font-size: 1.8rem; transition: all 0.2s; border: 3px solid transparent; cursor: pointer; color: #047857; }
         .avatar-btn.selected { border-color: #10b981; background-color: #d1fae5; transform: scale(1.1); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); color: #064e3b; }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; } .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; } .custom-scrollbar::-webkit-scrollbar-thumb { background: #10b981; border-radius: 10px; }
+        .pulse-btn { animation: pulseBtn 1.5s infinite; }
+        @keyframes pulseBtn { 0% { box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(250, 204, 21, 0); } 100% { box-shadow: 0 0 0 0 rgba(250, 204, 21, 0); } }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 text-gray-800">
 
+    <div id="loading-screen" class="absolute inset-0 bg-emerald-900 z-[200] flex flex-col items-center justify-center text-white transition-opacity duration-500">
+        <div id="loading-spinner" class="flex flex-col items-center">
+            <i class="fa-solid fa-spinner fa-spin text-6xl text-yellow-400 mb-4"></i>
+            <p class="text-lg font-bold animate-pulse text-emerald-100">Memuat Aset Game...</p>
+        </div>
+        <div id="enter-btn-container" class="hidden flex-col items-center">
+            <div class="text-yellow-400 text-7xl mb-6 drop-shadow-lg"><i class="fa-solid fa-mosque"></i></div>
+            <h1 class="text-3xl font-extrabold mb-8 text-center leading-tight">Kuis Spesial<br>Lebaran BO2</h1>
+            <button onclick="enterHome()" class="bg-yellow-500 hover:bg-yellow-600 text-emerald-900 font-black py-4 px-10 rounded-full text-xl pulse-btn transition transform hover:scale-110">
+                MASUK <i class="fa-solid fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+    </div>
+
     <div id="app-container" class="glass-panel w-full max-w-md rounded-3xl shadow-2xl overflow-hidden fade-in relative flex flex-col max-h-[90vh]">
         
-        <div id="start-screen" class="p-6 text-center overflow-y-auto custom-scrollbar">
+        <div id="start-screen" class="p-6 text-center overflow-y-auto custom-scrollbar hidden">
             <div class="text-emerald-600 text-5xl mb-2 animate-bounce"><i class="fa-solid fa-mosque"></i></div>
             <h1 class="text-2xl font-extrabold text-gray-900 mb-1">Kuis Lebaran</h1>
             <h2 class="text-md text-emerald-700 font-bold mb-4 bg-emerald-100 py-1 rounded-full mx-auto max-w-[80%]">BO2 Prakerja</h2>
@@ -51,13 +67,11 @@
             <button onclick="showLeaderboard()" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-2xl shadow-lg transition duration-200 transform hover:scale-[1.02] text-lg mt-3 flex justify-center items-center">
                 <i class="fa-solid fa-trophy mr-2"></i> Papan Skor
             </button>
-            
-            <p id="audio-hint" class="text-[10px] text-gray-400 mt-3"><i class="fa-solid fa-volume-high"></i> Nyalakan suara untuk pengalaman terbaik</p>
         </div>
 
         <div id="countdown-screen" class="hidden absolute inset-0 bg-emerald-800 z-[100] flex flex-col items-center justify-center text-white h-full w-full">
-            <h2 class="text-3xl font-bold mb-6">Bersiaplah...</h2>
-            <div id="countdown-number" class="text-9xl font-black text-yellow-400 drop-shadow-lg animate-pulse">5</div>
+            <h2 class="text-3xl font-bold mb-6 drop-shadow-md">Bersiaplah...</h2>
+            <img id="countdown-gif" src="" alt="Countdown 54321" class="w-64 h-64 object-contain drop-shadow-2xl rounded-3xl">
         </div>
 
         <div id="game-screen" class="hidden flex-col h-full overflow-y-auto">
@@ -137,34 +151,45 @@
         // --- 1. SETUP AUDIO ---
         const bgmOpening = new Audio('bgm-opening.mp3'); bgmOpening.loop = true;
         const sfxCountdown = new Audio('sfx-countdown.mp3');
-        sfxCountdown.playbackRate = 2.0; // MEMPERCEPAT SUARA COUNTDOWN 2X LIPAT
+        sfxCountdown.playbackRate = 2.0; 
         
         const bgmGameplay = new Audio('bgm-gameplay.mp3'); bgmGameplay.loop = true;
         const sfxTick = new Audio('sfx-tick.mp3'); sfxTick.loop = true;
-        
-        // SUARA BENAR & SALAH
         const sfxRight = new Audio('sfx-right.mp3');
         const sfxTimeout = new Audio('sfx-timeout.mp3');
         const bgmEnding = new Audio('bgm-ending.mp3'); bgmEnding.loop = true;
-
-        let audioInitialized = false;
 
         function playAudio(audioObj) {
             if (!audioObj) return;
             audioObj.currentTime = 0;
             const playPromise = audioObj.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(error => { console.log("Audio play blocked"); });
-            }
+            if (playPromise !== undefined) playPromise.catch(e => console.log("Audio waiting for interaction", e));
         }
         function stopAudio(audioObj) { if (audioObj) audioObj.pause(); }
 
-        document.body.addEventListener('click', () => {
-            if (!audioInitialized) { playAudio(bgmOpening); audioInitialized = true; }
-        }, { once: true });
+        // --- 2. LOADING SCREEN LOGIC ---
+        // Saat halaman selesai dimuat, tunggu 1,5 detik lalu munculkan tombol MASUK
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loading-spinner').classList.add('hidden');
+                document.getElementById('enter-btn-container').classList.remove('hidden');
+                document.getElementById('enter-btn-container').classList.add('flex');
+            }, 1500);
+        });
+
+        // Fungsi saat tombol MASUK diklik (Memenuhi syarat browser untuk Play Audio)
+        function enterHome() {
+            document.getElementById('loading-screen').style.opacity = "0";
+            setTimeout(() => {
+                document.getElementById('loading-screen').classList.add('hidden');
+                document.getElementById('start-screen').classList.remove('hidden');
+                document.body.style.overflow = 'auto'; // Mengembalikan scroll
+                playAudio(bgmOpening); // MUSIK OPENING BERJALAN!
+            }, 500);
+        }
 
 
-        // --- 2. SETUP KARAKTER (30 IKON AMAN FONT AWESOME) ---
+        // --- 3. SETUP KARAKTER (30 IKON AMAN) ---
         const allIcons = ['fa-user', 'fa-user-tie', 'fa-user-graduate', 'fa-user-ninja', 'fa-user-astronaut', 'fa-user-secret', 'fa-user-doctor', 'fa-ghost', 'fa-skull', 'fa-robot', 'fa-cat', 'fa-dog', 'fa-horse', 'fa-frog', 'fa-fish', 'fa-spider', 'fa-bug', 'fa-crow', 'fa-dove', 'fa-hippo', 'fa-otter', 'fa-worm', 'fa-snowman', 'fa-mask', 'fa-poop', 'fa-motorcycle', 'fa-car', 'fa-plane', 'fa-rocket', 'fa-ship'];
         let selectedAvatarClass = '';
         
@@ -187,25 +212,24 @@
         }
         renderAvatars();
 
-
-        // --- 3. BANK SOAL (8 Kategori @ 15 Soal) ---
+        // --- 4. BANK SOAL (120 SOAL) ---
         const questionBank = {
             prakerja: [
                 { q: "Pada tahun berapakah Program Kartu Prakerja pertama kali diluncurkan secara resmi oleh pemerintah?", o: ["2018", "2019", "2020", "2021"], a: 2 },
-                { q: "Siapakah nama Direktur Eksekutif Manajemen Pelaksana Program Kartu Prakerja (PMO) saat ini?", o: ["Airlangga Hartarto", "Sri Mulyani", "Denni Puspa Purbasari", "Nadiem Makarim"], a: 2 },
+                { q: "Siapakah nama Direktur Eksekutif PMO Prakerja saat ini?", o: ["Airlangga Hartarto", "Sri Mulyani", "Denni Puspa Purbasari", "Nadiem Makarim"], a: 2 },
                 { q: "Berapakah batas usia minimal untuk bisa mendaftar Program Kartu Prakerja?", o: ["17 Tahun", "18 Tahun", "20 Tahun", "21 Tahun"], a: 1 },
-                { q: "Berapakah batas usia maksimal bagi pendaftar Program Kartu Prakerja berdasarkan aturan terbaru?", o: ["55 Tahun", "60 Tahun", "64 Tahun", "Tidak Terbatas"], a: 2 },
+                { q: "Berapakah batas usia maksimal bagi pendaftar Program Kartu Prakerja?", o: ["55 Tahun", "60 Tahun", "64 Tahun", "Tidak Terbatas"], a: 2 },
                 { q: "Mulai tahun 2023, Kartu Prakerja beralih dari skema bantuan sosial (semi bansos) menjadi skema...", o: ["Skema Pendidikan", "Skema Normal", "Skema Bantuan Langsung", "Skema Mahasiswa"], a: 1 },
-                { q: "Pada Skema Normal, berapakah total nilai besaran beasiswa (saldo) yang diberikan KHUSUS untuk membeli pelatihan?", o: ["Rp 1.000.000", "Rp 2.400.000", "Rp 3.500.000", "Rp 4.200.000"], a: 2 },
-                { q: "Berapakah insentif pasca pelatihan (uang tunai) yang didapat peserta jika menyelesaikan pelatihan pada Skema Normal?", o: ["Rp 600.000", "Rp 1.000.000", "Rp 2.400.000", "Rp 3.500.000"], a: 0 },
-                { q: "Peserta Prakerja akan mendapatkan insentif tambahan jika mengisi Survei Evaluasi. Berapa nilai insentif per surveinya?", o: ["Rp 25.000", "Rp 50.000", "Rp 100.000", "Rp 150.000"], a: 1 },
-                { q: "Berapa lama batas waktu yang diberikan kepada peserta untuk membeli pelatihan pertama sejak dinyatakan lolos gelombang?", o: ["7 Hari", "15 Hari", "30 Hari", "60 Hari"], a: 1 },
-                { q: "Kementerian apakah yang menjadi 'induk' atau koordinator utama dari Program Kartu Prakerja?", o: ["Kemenaker", "Kemenkeu", "Kemenko Perekonomian", "Kemendikbud"], a: 2 },
+                { q: "Pada Skema Normal, berapakah total nilai besaran beasiswa (saldo) khusus untuk membeli pelatihan?", o: ["Rp 1.000.000", "Rp 2.400.000", "Rp 3.500.000", "Rp 4.200.000"], a: 2 },
+                { q: "Berapakah insentif pasca pelatihan (uang tunai) yang didapat peserta pada Skema Normal?", o: ["Rp 600.000", "Rp 1.000.000", "Rp 2.400.000", "Rp 3.500.000"], a: 0 },
+                { q: "Peserta akan mendapat insentif tambahan jika mengisi Survei Evaluasi. Berapa nilainya per survei?", o: ["Rp 25.000", "Rp 50.000", "Rp 100.000", "Rp 150.000"], a: 1 },
+                { q: "Berapa lama batas waktu peserta untuk membeli pelatihan pertama sejak lolos gelombang?", o: ["7 Hari", "15 Hari", "30 Hari", "60 Hari"], a: 1 },
+                { q: "Kementerian apakah yang menjadi koordinator utama dari Program Kartu Prakerja?", o: ["Kemenaker", "Kemenkeu", "Kemenko Perekonomian", "Kemendikbud"], a: 2 },
                 { q: "Manakah dari golongan berikut yang TIDAK BOLEH mendaftar Kartu Prakerja?", o: ["Korban PHK", "Pencari Kerja Baru", "PNS / TNI / Polri", "Pelaku UMKM"], a: 2 },
-                { q: "Apa tujuan utama dari Program Kartu Prakerja pada Skema Normal saat ini?", o: ["Bantuan sembako", "Meningkatkan kompetensi kerja & kewirausahaan", "Memberi modal usaha langsung", "Membayar cicilan masyarakat"], a: 1 },
-                { q: "Dalam pelaksanaannya, terdapat fitur rekomendasi lowongan kerja di dashboard Prakerja yang bekerja sama dengan platform job portal. Fitur ini disebut...", o: ["Job Recommendation", "Prakerja Karir", "Bursa Kerja Nasional", "SIPP"], a: 0 },
-                { q: "Selain pelatihan Webinar/Online, Skema Normal Prakerja juga memberlakukan metode pelatihan...", o: ["Tatap Muka (Offline)", "Magang Luar Negeri", "Kuliah Jarak Jauh", "Sekolah Kedinasan"], a: 0 },
-                { q: "Dalam menjaga akuntabilitas, Program Kartu Prakerja selalu diawasi secara ketat oleh lembaga negara, salah satunya adalah...", o: ["Komnas HAM", "BPK dan KPK", "Mahkamah Konstitusi", "KPU"], a: 1 }
+                { q: "Apa tujuan utama dari Program Kartu Prakerja pada Skema Normal saat ini?", o: ["Bantuan sembako", "Meningkatkan kompetensi kerja", "Memberi modal usaha", "Membayar cicilan"], a: 1 },
+                { q: "Fitur rekomendasi lowongan kerja di dashboard Prakerja disebut...", o: ["Job Recommendation", "Prakerja Karir", "Bursa Kerja", "SIPP"], a: 0 },
+                { q: "Selain pelatihan Online, Skema Normal Prakerja juga memberlakukan metode pelatihan...", o: ["Tatap Muka (Offline)", "Magang Luar Negeri", "Kuliah Jarak Jauh", "Sekolah Kedinasan"], a: 0 },
+                { q: "Program Kartu Prakerja diawasi secara ketat oleh lembaga negara, salah satunya adalah...", o: ["Komnas HAM", "BPK dan KPK", "Mahkamah Konstitusi", "KPU"], a: 1 }
             ],
             sejarah: [
                 { q: "Naskah asli Proklamasi yang sempat dibuang ke tempat sampah diselamatkan oleh...", o: ["Sayuti Melik", "B.M. Diah", "Sukarni", "Latief H."], a: 1 },
@@ -251,7 +275,7 @@
                 { q: "Tokoh yang terkenal dengan kebijaksanaannya dan kemampuannya berbicara dengan hewan...", o: ["Daud/David", "Sulaiman/Solomon", "Yusuf/Joseph", "Musa/Moses"], a: 1 },
                 { q: "Kitab suci Zabur (Mazmur) diwahyukan kepada Nabi...", o: ["Daud/David", "Musa/Moses", "Isa/Yesus", "Ibrahim/Abraham"], a: 0 },
                 { q: "Tokoh yang dibuang ke dalam sumur oleh saudara-saudaranya dan kelak menjadi petinggi di Mesir...", o: ["Yunus", "Yusuf/Joseph", "Musa", "Ismail"], a: 1 },
-                { q: "Agama Islam, Kristen, dan Yahudi sering dikelompokkan dalam satu rumpun agama yaitu...", o: ["Agama Dharma", "Agama Samawi (Abrahamik)", "Agama Lokal", "Agama Timur"], a: 1 },
+                { q: "Agama Islam, Kristen, dan Yahudi sering dikelompokkan dalam satu rumpun agama yaitu...", o: ["Agama Dharma", "Agama Samawi", "Agama Lokal", "Agama Timur"], a: 1 },
                 { q: "Ibunda dari Nabi Isa / Yesus adalah...", o: ["Siti Hawa", "Siti Sarah", "Maryam/Maria", "Siti Hajar"], a: 2 },
                 { q: "Tokoh yang diperintahkan membuat bahtera/kapal besar untuk selamat dari air bah...", o: ["Ibrahim", "Musa", "Nuh/Noah", "Luth"], a: 2 },
                 { q: "Kota tempat Yesus dilahirkan (menurut tradisi Kristen) yang juga dihormati dalam Islam...", o: ["Yerusalem", "Nazaret", "Betlehem", "Mekkah"], a: 2 },
@@ -259,7 +283,7 @@
                 { q: "Konsep percaya kepada Satu Tuhan Yang Maha Esa dalam kedua agama disebut...", o: ["Politeisme", "Monoteisme", "Panteisme", "Animisme"], a: 1 }
             ],
             logika: [
-                { q: "Semua BO2 suka opor, sebagian yang suka opor memakai baju baru. Kesimpulannya...", o: ["Semua berbaju baru", "Sebagian BO2 berbaju baru", "Semua BO2 berbaju baru", "Tidak bisa ditarik kesimpulan pasti"], a: 3 },
+                { q: "Semua BO2 suka opor, sebagian yang suka opor memakai baju baru. Kesimpulannya...", o: ["Semua berbaju baru", "Sebagian BO2 berbaju baru", "Semua BO2 berbaju baru", "Tidak bisa ditarik kesimpulan"], a: 3 },
                 { q: "Deret: 2, 5, 10, 17, 26, ... Angka selanjutnya?", o: ["35", "37", "39", "41"], a: 1 },
                 { q: "Ayah Budi punya 5 anak: Nana, Nene, Nini, Nono. Siapa anak kelima?", o: ["Nunu", "Budi", "Nana", "Nanya"], a: 1 },
                 { q: "Berapa banyak huruf 'A' dalam kalimat: 'ALUMNI PRAKERJA BO DUA'?", o: ["3", "4", "5", "6"], a: 1 },
@@ -294,20 +318,20 @@
             ],
             ekonomi: [
                 { q: "Kondisi di mana harga barang-barang secara umum mengalami kenaikan terus-menerus disebut...", o: ["Deflasi", "Devaluasi", "Inflasi", "Depresiasi"], a: 2 },
-                { q: "Lembaga yang bertugas menjaga kestabilan nilai Rupiah adalah...", o: ["OJK", "Kementerian Keuangan", "Bank Indonesia (BI)", "Bursa Efek"], a: 2 },
+                { q: "Lembaga yang bertugas menjaga kestabilan nilai Rupiah adalah...", o: ["OJK", "Kemenkeu", "Bank Indonesia (BI)", "Bursa Efek"], a: 2 },
                 { q: "Harga daging naik drastis jelang Lebaran terjadi karena...", o: ["Inflasi tahunan", "Permintaan naik, Penawaran tetap", "Monopoli pasar", "Nilai Rupiah turun"], a: 1 },
                 { q: "Bapak Koperasi Indonesia yang juga Wakil Presiden pertama RI adalah...", o: ["Soekarno", "Mohammad Hatta", "Sutan Sjahrir", "Adam Malik"], a: 1 },
-                { q: "Tempat bertemunya penjual dan pembeli (baik fisik maupun virtual) dalam ekonomi disebut...", o: ["Kantor", "Pasar", "Bank", "Bursa"], a: 1 },
+                { q: "Tempat bertemunya penjual dan pembeli dalam ekonomi disebut...", o: ["Kantor", "Pasar", "Bank", "Bursa"], a: 1 },
                 { q: "Hukum Permintaan menyatakan bahwa jika harga naik, maka jumlah barang yang diminta akan...", o: ["Tetap", "Naik", "Turun", "Berubah-ubah"], a: 2 },
                 { q: "Surat berharga yang menunjukkan bukti kepemilikan bagian modal perusahaan disebut...", o: ["Obligasi", "Reksa Dana", "Saham", "Deposito"], a: 2 },
                 { q: "Sistem ekonomi yang dianut oleh negara Indonesia berdasarkan UUD 1945 adalah...", o: ["Kapitalis", "Komunis", "Sistem Ekonomi Pancasila", "Liberal"], a: 2 },
-                { q: "Lembaga negara yang mengawasi seluruh kegiatan di sektor jasa keuangan (Bank, Asuransi) adalah...", o: ["BI", "OJK", "LPS", "KPK"], a: 1 },
+                { q: "Lembaga negara yang mengawasi seluruh kegiatan di sektor jasa keuangan adalah...", o: ["BI", "OJK", "LPS", "KPK"], a: 1 },
                 { q: "Nilai mata uang suatu negara yang diukur dengan mata uang negara lain disebut...", o: ["Suku Bunga", "Inflasi", "Kurs", "Devisa"], a: 2 },
                 { q: "Pajak Pertambahan Nilai (PPN) di Indonesia saat ini (berdasarkan UU HPP terbaru) tarif standarnya adalah...", o: ["10%", "11%", "12%", "15%"], a: 1 },
                 { q: "Tindakan mengurangi nilai mata uang negara sendiri terhadap mata uang asing oleh pemerintah disebut...", o: ["Revaluasi", "Devaluasi", "Depresiasi", "Apresiasi"], a: 1 },
-                { q: "Perusahaan yang seluruh atau sebagian besar modalnya dimiliki oleh negara melalui kekayaan negara yang dipisahkan disebut...", o: ["PT", "CV", "BUMN", "Firma"], a: 2 },
-                { q: "Kegiatan membeli barang dari luar negeri untuk dimasukkan ke dalam daerah pabean Indonesia disebut...", o: ["Ekspor", "Import", "Barter", "Dumping"], a: 1 },
-                { q: "Salah satu dari 15 negara pasar utama wisman ke Indonesia berdasarkan data sejarah adalah...", o: ["Argentina", "Malaysia", "Mesir", "Brasil"], a: 1 }
+                { q: "Perusahaan yang seluruh atau sebagian besar modalnya dimiliki oleh negara disebut...", o: ["PT", "CV", "BUMN", "Firma"], a: 2 },
+                { q: "Kegiatan membeli barang dari luar negeri disebut...", o: ["Ekspor", "Import", "Barter", "Dumping"], a: 1 },
+                { q: "Salah satu dari 15 negara pasar utama wisman ke Indonesia adalah...", o: ["Argentina", "Malaysia", "Mesir", "Brasil"], a: 1 }
             ],
             hukum: [
                 { q: "Lembaga yang berwenang mengadili sengketa hasil Pemilu adalah...", o: ["Mahkamah Agung", "KPU", "Mahkamah Konstitusi", "DPR"], a: 2 },
@@ -315,13 +339,13 @@
                 { q: "Lembaga yang memberantas tindak pidana korupsi adalah...", o: ["Polri", "Kejaksaan Agung", "KPK", "Mahkamah Agung"], a: 2 },
                 { q: "Usia minimal mendapatkan Kartu Tanda Penduduk (KTP) adalah...", o: ["15 Tahun", "17 Tahun", "18 Tahun", "21 Tahun"], a: 1 },
                 { q: "Hak Cipta sebuah lagu masuk ke ranah hukum...", o: ["Hukum Pidana", "Hukum Tata Negara", "Hukum Kekayaan Intelektual", "Hukum Internasional"], a: 2 },
-                { q: "Asas hukum yang menyatakan seseorang dianggap tidak bersalah sampai dibuktikan sebaliknya di pengadilan adalah...", o: ["Asas Legalitas", "Presumption of Innocence", "Asas Praduga Bersalah", "Asas Lex Specialis"], a: 1 },
+                { q: "Asas hukum: seseorang dianggap tidak bersalah sampai dibuktikan sebaliknya di pengadilan adalah...", o: ["Asas Legalitas", "Presumption of Innocence", "Asas Praduga Bersalah", "Asas Lex Specialis"], a: 1 },
                 { q: "Rancangan Undang-Undang (RUU) dibahas dan disetujui bersama oleh Presiden dan...", o: ["MPR", "DPD", "DPR", "Mahkamah Agung"], a: 2 },
-                { q: "Lembaga yang bertugas menjaga kehormatan dan keluhuran martabat hakim adalah...", o: ["Mahkamah Konstitusi", "Komisi Yudisial", "DPR", "Komnas HAM"], a: 1 },
+                { q: "Lembaga yang bertugas menjaga kehormatan martabat hakim adalah...", o: ["Mahkamah Konstitusi", "Komisi Yudisial", "DPR", "Komnas HAM"], a: 1 },
                 { q: "Pembunuhan berencana dalam KUHP Indonesia biasanya diancam dengan pasal...", o: ["338", "340", "362", "378"], a: 1 },
                 { q: "Mencuri barang milik orang lain diatur dalam Hukum...", o: ["Hukum Perdata", "Hukum Tata Usaha Negara", "Hukum Pidana", "Hukum Adat"], a: 2 },
                 { q: "Surat Izin Mengemudi (SIM) C di Indonesia diperuntukkan bagi pengemudi...", o: ["Mobil Penumpang", "Truk Besar", "Sepeda Motor", "Kendaraan Umum"], a: 2 },
-                { q: "Badan yang berwenang memeriksa pengelolaan dan tanggung jawab keuangan negara adalah...", o: ["KPK", "BPK", "Kementerian Keuangan", "DPR"], a: 1 },
+                { q: "Badan yang berwenang memeriksa pengelolaan tanggung jawab keuangan negara adalah...", o: ["KPK", "BPK", "Kementerian Keuangan", "DPR"], a: 1 },
                 { q: "Orang yang memberikan jasa hukum, baik di dalam maupun luar pengadilan disebut...", o: ["Jaksa", "Hakim", "Polisi", "Advokat / Pengacara"], a: 3 },
                 { q: "Undang-Undang ITE sering digunakan untuk menjerat kasus tindak pidana di dunia...", o: ["Lalu Lintas", "Perbankan", "Siber / Internet", "Lingkungan Hidup"], a: 2 },
                 { q: "Perjanjian sewa-menyewa rumah termasuk ke dalam ranah hukum...", o: ["Hukum Perdata", "Hukum Pidana", "Hukum Internasional", "Hukum Konstitusi"], a: 0 }
@@ -329,10 +353,9 @@
         };
 
         const categoryNames = { prakerja: "Prakerja", sejarah: "Sejarah", islam: "Islam", agama: "Agama", logika: "Logika", sastra: "Sastra", ekonomi: "Ekonomi", hukum: "Hukum" };
-        
         let sessionQuestions = [], currentQuestionIndex = 0, score = 0, playerName = "", timeLeft = 15, timerInterval, isAnswering = false;
 
-        // --- 4. PERSIAPAN & RANDOMISASI START ---
+        // --- 5. PERSIAPAN & RANDOMISASI START ---
         function prepareGame() {
             const name = document.getElementById('player-name').value.trim();
             const errorMsg = document.getElementById('input-error');
@@ -349,15 +372,14 @@
                 const shuffledOptions = [...originalOptions].sort(() => Math.random() - 0.5);
                 const newCorrectIndex = shuffledOptions.indexOf(correctText);
                 
-                sessionQuestions.push({ 
-                    category: categoryNames[key], q: rawQ.q, o: shuffledOptions, a: newCorrectIndex 
-                });
+                sessionQuestions.push({ category: categoryNames[key], q: rawQ.q, o: shuffledOptions, a: newCorrectIndex });
             }
             sessionQuestions.sort(() => Math.random() - 0.5);
             
             startGame();
         }
 
+        // --- 6. GIF COUNTDOWN LOGIC ---
         function startGame() {
             currentQuestionIndex = 0; score = 0; document.getElementById('score-display').innerText = "0";
             document.getElementById('start-screen').classList.add('hidden');
@@ -366,23 +388,19 @@
             stopAudio(bgmOpening);
             playAudio(sfxCountdown);
 
-            let count = 5;
-            document.getElementById('countdown-number').innerText = count;
-            const countInterval = setInterval(() => {
-                count--;
-                if(count > 0) {
-                    document.getElementById('countdown-number').innerText = count;
-                } else {
-                    clearInterval(countInterval);
-                    document.getElementById('countdown-screen').classList.add('hidden');
-                    document.getElementById('game-screen').classList.remove('hidden');
-                    playAudio(bgmGameplay);
-                    loadQuestion();
-                }
-            }, 1000);
+            // Pasang / Restart GIF (Menambahkan parameter waktu agar GIF ter-reset ke awal)
+            document.getElementById('countdown-gif').src = "countdown.gif?t=" + new Date().getTime();
+
+            // Tunggu 5 detik (sesuai durasi GIF/SFX) lalu pindah ke soal
+            setTimeout(() => {
+                document.getElementById('countdown-screen').classList.add('hidden');
+                document.getElementById('game-screen').classList.remove('hidden');
+                playAudio(bgmGameplay);
+                loadQuestion();
+            }, 5000);
         }
 
-        // --- 5. GAMEPLAY LOGIC ---
+        // --- 7. GAMEPLAY LOGIC ---
         function loadQuestion() {
             isAnswering = false; const q = sessionQuestions[currentQuestionIndex];
             document.getElementById('question-number').innerText = currentQuestionIndex + 1;
@@ -402,8 +420,7 @@
             document.getElementById('timer-display').parentElement.classList.replace('bg-red-600', 'bg-emerald-800');
             document.getElementById('timer-display').parentElement.classList.remove('animate-pulse');
             
-            // Putar bunyi tik tok dari awal soal muncul
-            playAudio(sfxTick);
+            playAudio(sfxTick); // SFX Detik sejak awal soal
             
             clearInterval(timerInterval); timerInterval = setInterval(updateTimer, 1000);
         }
@@ -411,7 +428,6 @@
         function updateTimer() {
             timeLeft--; document.getElementById('timer-display').innerText = timeLeft;
             if (timeLeft === 5) {
-                // Beri efek merah kedip di layar saat 5 detik terakhir
                 document.getElementById('timer-display').parentElement.classList.replace('bg-emerald-800', 'bg-red-600');
                 document.getElementById('timer-display').parentElement.classList.add('animate-pulse');
             }
@@ -499,7 +515,7 @@
             return { title: "Rendang Premium", desc: "Suhu BO2 Prakerja! Valid no debat!" };
         }
 
-        // --- 6. API DATABASE LOGIC ---
+        // --- 8. API DATABASE LOGIC ---
         async function endGame() {
             stopAudio(bgmGameplay); stopAudio(sfxTick); playAudio(bgmEnding);
             document.getElementById('game-screen').classList.add('hidden'); document.getElementById('progress-bar').style.width = `100%`;
@@ -520,6 +536,9 @@
         }
 
         async function showLeaderboard() {
+            // Jika masuk dari tombol Home (sebelum main), hentikan musik opening sementara jika sedang menyala
+            if(!document.getElementById('start-screen').classList.contains('hidden')) { stopAudio(bgmOpening); }
+            
             document.getElementById('leaderboard-screen').classList.remove('hidden'); document.getElementById('leaderboard-screen').style.display = 'flex';
             const listContainer = document.getElementById('leaderboard-list');
             listContainer.innerHTML = `<div class="text-center text-gray-500 mt-10"><i class="fa-solid fa-circle-notch fa-spin text-2xl mb-2"></i><br>Mencari data dari Server...</div>`;
@@ -554,30 +573,25 @@
             }
         }
 
-        // --- 7. FUNGSI ADMIN RESET DATABASE ---
         async function resetDatabase() {
             const pwd = prompt("PERINGATAN! Tindakan ini akan menghapus semua skor pemain.\n\nMasukkan Password Admin:");
             if (pwd === "19AG") {
                 try {
                     const response = await fetch('/.netlify/functions/scores', {
-                        method: 'DELETE',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ password: pwd })
+                        method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: pwd })
                     });
                     const data = await response.json();
-                    if(data.success) {
-                        alert("Berhasil! Seluruh Papan Skor telah direset.");
-                        showLeaderboard(); // Segarkan tampilan
-                    } else {
-                        alert("Gagal mereset: " + data.error);
-                    }
+                    if(data.success) { alert("Berhasil! Seluruh Papan Skor telah direset."); showLeaderboard(); } 
+                    else { alert("Gagal mereset: " + data.error); }
                 } catch (error) { alert("Terjadi kesalahan jaringan."); }
-            } else if (pwd !== null) {
-                alert("Password Salah! Akses ditolak.");
-            }
+            } else if (pwd !== null) { alert("Password Salah! Akses ditolak."); }
         }
 
-        function closeLeaderboard() { document.getElementById('leaderboard-screen').classList.add('hidden'); document.getElementById('leaderboard-screen').style.display = 'none'; }
+        function closeLeaderboard() { 
+            document.getElementById('leaderboard-screen').classList.add('hidden'); document.getElementById('leaderboard-screen').style.display = 'none'; 
+            // Jika kembali ke Home Screen, nyalakan lagi musiknya
+            if(!document.getElementById('start-screen').classList.contains('hidden') && audioInitialized) { playAudio(bgmOpening); }
+        }
 
         function shareToWA() {
             const rankTitle = document.getElementById('final-rank').innerText; const finalScore = score.toLocaleString('id-ID');
@@ -590,7 +604,7 @@
             stopAudio(bgmEnding);
             document.getElementById('result-screen').classList.add('hidden'); document.getElementById('start-screen').classList.remove('hidden');
             document.getElementById('start-screen').classList.add('fade-in'); document.getElementById('player-name').value = ''; 
-            selectedAvatarClass = ''; renderAvatars(); // Acak ulang ikon di depan
+            selectedAvatarClass = ''; renderAvatars(); playAudio(bgmOpening);
         }
 
         document.getElementById('player-name').addEventListener("keypress", function(event) { if (event.key === "Enter") { event.preventDefault(); prepareGame(); } });
