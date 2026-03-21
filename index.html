@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <meta property="og:title" content="Kuis Spesial Lebaran BO2 Prakerja" />
+    <meta property="og:description" content="Uji wawasanmu dan raih posisi puncak di Papan Skor Top 10 Grup BO2!" />
+    <meta property="og:image" content="https://drive.google.com/uc?export=view&id=1FRLzW_EW5cT8PoWVD2z6CZtFEHP7nHmW" />
+    <meta property="og:type" content="website" />
+
+    <title>Kuis Spesial Lebaran BO2 Prakerja</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #064e3b; 
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23047857' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            -webkit-tap-highlight-color: transparent; 
+        }
+        .glass-panel { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); }
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .option-btn { transition: all 0.2s; border-color: #e5e7eb; background-color: #ffffff; color: #374151; }
+        @media (hover: hover) and (pointer: fine) {
+            .option-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border-color: #60a5fa !important; background-color: #eff6ff !important; }
+        }
+        .option-btn:active:not(:disabled) { transform: scale(0.98); }
+
+        .btn-wa { background-color: #25D366; color: white; }
+        .btn-wa:hover { background-color: #128C7E; }
+
+        .avatar-btn { font-size: 2rem; transition: all 0.2s; border: 3px solid transparent; cursor: pointer; }
+        .avatar-btn.selected { border-color: #10b981; background-color: #d1fae5; transform: scale(1.1); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #10b981; border-radius: 10px; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 text-gray-800">
+
+    <div id="app-container" class="glass-panel w-full max-w-md rounded-3xl shadow-2xl overflow-hidden fade-in relative flex flex-col max-h-[90vh]">
+        
+        <div id="start-screen" class="p-6 text-center overflow-y-auto custom-scrollbar">
+            <div class="text-emerald-600 text-5xl mb-2 animate-bounce"><i class="fa-solid fa-mosque"></i></div>
+            <h1 class="text-2xl font-extrabold text-gray-900 mb-1">Kuis Lebaran</h1>
+            <h2 class="text-md text-emerald-700 font-bold mb-4 bg-emerald-100 py-1 rounded-full mx-auto max-w-[80%]">BO2 Prakerja</h2>
+            
+            <div class="bg-gray-50 rounded-2xl p-4 mb-5 border border-gray-200">
+                <p class="text-sm font-bold text-gray-700 mb-3">Pilih Avatar & Masukkan Nama</p>
+                <div id="avatar-grid" class="grid grid-cols-5 gap-2 mb-4"></div>
+                <input type="text" id="player-name" placeholder="Nama Anda..." class="w-full px-4 py-3 rounded-xl border-2 border-gray-300 focus:border-emerald-500 focus:outline-none text-center font-bold text-lg transition-all" autocomplete="off" maxlength="15">
+                <p id="input-error" class="text-red-500 text-sm mt-2 font-semibold hidden animate-pulse">Pilih avatar & isi nama dulu!</p>
+            </div>
+            
+            <button onclick="startGame()" id="start-btn" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-2xl shadow-lg transition duration-200 transform hover:scale-[1.02] text-lg flex justify-center items-center">
+                Mulai Main <i class="fa-solid fa-rocket ml-2"></i>
+            </button>
+            <p id="db-status" class="text-xs text-emerald-600 mt-2 font-bold"><i class="fa-solid fa-database"></i> Database Aktif</p>
+        </div>
+
+        <div id="game-screen" class="hidden flex-col h-full overflow-y-auto">
+            <div class="bg-emerald-600 text-white p-3 flex justify-between items-center shadow-md rounded-b-xl sticky top-0 z-10">
+                <div class="font-bold flex flex-col">
+                    <span class="text-[10px] text-emerald-200 uppercase">Skor</span>
+                    <span class="text-lg flex items-center"><i class="fa-solid fa-star text-yellow-300 mr-1 text-xs"></i> <span id="score-display">0</span></span>
+                </div>
+                <div class="font-bold text-center">
+                    <span class="text-[10px] text-emerald-200 uppercase block">Soal</span>
+                    <span class="text-lg"><span id="question-number">1</span>/7</span>
+                </div>
+                <div class="font-bold flex flex-col items-end">
+                    <span class="text-[10px] text-emerald-200 uppercase">Waktu</span>
+                    <span class="text-lg flex items-center bg-emerald-800 px-2 rounded-lg"><i class="fa-solid fa-stopwatch mr-1 text-xs"></i> <span id="timer-display">15</span></span>
+                </div>
+            </div>
+
+            <div class="w-full bg-gray-200 h-1.5 mt-1">
+                <div id="progress-bar" class="bg-yellow-400 h-1.5 transition-all duration-300 rounded-r-full" style="width: 0%"></div>
+            </div>
+
+            <div class="p-5 flex-grow">
+                <span id="category-badge" class="inline-block bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-1 rounded-full mb-2 uppercase tracking-wider">Kategori</span>
+                <h3 id="question-text" class="text-lg font-bold mb-4 text-gray-800 leading-snug">Pertanyaan...</h3>
+                <div id="options-container" class="space-y-2"></div>
+            </div>
+            
+            <div id="feedback-container" class="hidden absolute inset-0 flex items-center justify-center bg-white bg-opacity-95 z-20">
+                <div id="feedback-content" class="text-center transform scale-150 transition-transform duration-300 flex flex-col items-center"></div>
+            </div>
+        </div>
+
+        <div id="result-screen" class="hidden p-6 text-center overflow-y-auto custom-scrollbar">
+            <h2 class="text-2xl font-extrabold text-emerald-700 mb-1">Alhamdulillah!</h2>
+            <p class="text-gray-600 mb-3 text-md">Permainan selesai, <span id="final-avatar"></span> <span id="final-name" class="font-bold text-gray-900">Nama</span>!</p>
+            
+            <div class="mb-4 rounded-xl overflow-hidden shadow-md border-2 border-yellow-400 max-h-40 relative bg-gray-100 flex justify-center items-center">
+                <img src="https://drive.google.com/uc?export=view&id=1FRLzW_EW5cT8PoWVD2z6CZtFEHP7nHmW" alt="Spesial Lebaran" class="object-cover w-full h-full" onerror="this.src='https://via.placeholder.com/400x200?text=Selamat+Lebaran+BO2';">
+            </div>
+
+            <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl p-4 mb-4 border border-emerald-200 shadow-inner">
+                <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-1">Skor Akhir</p>
+                <div class="text-4xl font-black text-emerald-600 mb-3 drop-shadow-sm" id="final-score">0</div>
+                <div class="border-t border-emerald-200 pt-3">
+                    <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-1">Gelar Lebaran Anda:</p>
+                    <p class="text-xl font-extrabold text-yellow-600 leading-tight mb-2" id="final-rank">Gelar</p>
+                    <p class="text-xs text-gray-700 italic bg-white p-2 rounded-lg border border-emerald-100" id="rank-description">Deskripsi</p>
+                </div>
+            </div>
+
+            <div class="space-y-2 flex flex-col">
+                <button onclick="showLeaderboard()" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-xl shadow-md transition duration-200">
+                    <i class="fa-solid fa-trophy mr-2"></i> Lihat Papan Skor Top 10
+                </button>
+                <button onclick="shareToWA()" class="w-full btn-wa font-bold py-3 px-4 rounded-xl shadow-md transition duration-200">
+                    <i class="fa-brands fa-whatsapp text-xl mr-2"></i> Pamerkan ke Grup!
+                </button>
+                <button onclick="resetGame()" class="w-full bg-white border-2 border-gray-300 hover:bg-gray-50 text-gray-700 font-bold py-2 px-4 rounded-xl transition duration-200 text-sm">
+                    <i class="fa-solid fa-rotate-right mr-1"></i> Main Ulang
+                </button>
+            </div>
+        </div>
+
+        <div id="leaderboard-screen" class="hidden flex-col h-full bg-gray-50 absolute inset-0 z-30 fade-in rounded-3xl overflow-hidden">
+            <div class="bg-emerald-600 text-white p-4 text-center shadow-md relative">
+                <button onclick="closeLeaderboard()" class="absolute left-4 top-4 text-emerald-200 hover:text-white"><i class="fa-solid fa-arrow-left text-xl"></i></button>
+                <h2 class="text-xl font-bold"><i class="fa-solid fa-crown text-yellow-300 mr-2"></i> Top 10 Skor BO2</h2>
+            </div>
+            <div class="flex-grow overflow-y-auto p-4 custom-scrollbar" id="leaderboard-list"></div>
+        </div>
+
+    </div>
+
+    <script>
+        const avatars = ['👹', '😈', '😺', '🤡', '🙊', '👽', '☠️', '👱‍♀️', '👴', '🧑‍🦳'];
+        let selectedAvatar = '';
+        const avatarGrid = document.getElementById('avatar-grid');
+        avatars.forEach(emoji => {
+            const btn = document.createElement('button');
+            btn.className = 'avatar-btn rounded-xl bg-white shadow-sm flex items-center justify-center p-2';
+            btn.innerText = emoji;
+            btn.onclick = () => {
+                document.querySelectorAll('.avatar-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected'); selectedAvatar = emoji;
+            };
+            avatarGrid.appendChild(btn);
+        });
+
+        const questionBank = {
+            sejarah: [
+                { q: "Naskah asli Proklamasi yang ditulis tangan oleh Soekarno sempat dibuang ke tempat sampah, sebelum diselamatkan oleh...", o: ["Sayuti Melik", "B.M. Diah", "Sukarni", "Latief H."], a: 1 },
+                { q: "Kerajaan Islam pertama di Nusantara yang terletak di pesisir utara Sumatera adalah...", o: ["Kerajaan Demak", "Kerajaan Mataram", "Samudera Pasai", "Kerajaan Banten"], a: 2 },
+                { q: "Konferensi Asia Afrika (KAA) yang bersejarah pada tahun 1955 diselenggarakan di kota...", o: ["Jakarta", "Surabaya", "Bandung", "Yogyakarta"], a: 2 },
+                { q: "Perjanjian yang akhirnya membuat Belanda mengakui kedaulatan Indonesia secara penuh pada tahun 1949 adalah...", o: ["Perjanjian Linggarjati", "Perjanjian Renville", "Perjanjian Roem-Royen", "Konferensi Meja Bundar"], a: 3 },
+                { q: "Siapakah pahlawan nasional dari Jawa Barat yang memimpin perang rakyat melawan Belanda dengan taktik gerilya?", o: ["Pangeran Diponegoro", "Mohammad Toha", "Kapitan Pattimura", "Teuku Umar"], a: 1 }
+            ],
+            islam: [
+                { q: "Dalam Shalat Idul Fitri, jumlah takbir tambahan pada rakaat pertama dan kedua (selain takbiratul ihram & intiqal) adalah...", o: ["7 dan 5", "5 dan 7", "7 dan 7", "3 dan 3"], a: 0 },
+                { q: "Zakat yang wajib dikeluarkan oleh setiap muslim sebelum pelaksanaan Shalat Idul Fitri disebut...", o: ["Zakat Mal", "Zakat Profesi", "Zakat Fitrah", "Sedekah Jariyah"], a: 2 },
+                { q: "Puasa sunnah 6 hari yang sangat dianjurkan setelah perayaan Idul Fitri dilakukan di bulan...", o: ["Ramadhan", "Syawal", "Dzulhijjah", "Muharram"], a: 1 },
+                { q: "Tradisi khas Indonesia berupa kunjung-mengunjungi untuk saling memaafkan setelah Lebaran dikenal dengan istilah...", o: ["Tarawih", "Halal Bihalal", "Tadarus", "Nyadran"], a: 1 },
+                { q: "Malaikat yang bertugas membagikan rezeki dari Allah SWT adalah...", o: ["Malaikat Jibril", "Malaikat Mikail", "Malaikat Israfil", "Malaikat Izrail"], a: 1 }
+            ],
+            kristen_islam: [
+                { q: "Tokoh besar yang diakui sebagai 'Bapak Para Nabi' dalam tradisi Islam dan Kristen karena ketaatannya yang luar biasa adalah...", o: ["Nabi Musa", "Nabi Ibrahim", "Nabi Daud", "Nabi Nuh"], a: 1 },
+                { q: "Tempat ibadah suci bersejarah yang dihormati oleh agama Islam dan Kristen terletak di kota...", o: ["Mekkah", "Vatikan", "Yerusalem", "Madinah"], a: 2 },
+                { q: "Siapakah nama malaikat yang menyampaikan kabar gembira (wahyu) kepada Maryam/Maria?", o: ["Jibril / Gabriel", "Mikail / Michael", "Israfil / Raphael", "Izrail / Azrael"], a: 0 },
+                { q: "Nabi yang memiliki mukjizat membelah laut untuk menyelamatkan umatnya dalam kitab kedua agama adalah...", o: ["Ibrahim", "Musa", "Isa/Yesus", "Yunus"], a: 1 },
+                { q: "Tokoh yang dikisahkan ditelan oleh ikan paus raksasa karena meninggalkan kaumnya adalah...", o: ["Nabi Ayub", "Nabi Daud", "Nabi Sulaiman", "Nabi Yunus"], a: 3 }
+            ],
+            logika: [
+                { q: "Jika semua alumni BO2 suka opor, dan sebagian yang suka opor memakai baju baru saat Lebaran, kesimpulannya...", o: ["Semua memakai baju baru", "Sebagian BO2 berbaju baru", "Semua berbaju baru adalah BO2", "Tidak bisa ditarik kesimpulan pasti"], a: 3 },
+                { q: "Angka selanjutnya dari deret: 2, 5, 10, 17, 26, ... adalah?", o: ["35", "37", "39", "41"], a: 1 },
+                { q: "Ayah Budi punya 5 anak: Nana, Nene, Nini, Nono. Siapa nama anak kelima?", o: ["Nunu", "Budi", "Nana", "Nanya"], a: 1 },
+                { q: "Hari ini hujan atau cerah. Ternyata hari ini tidak hujan. Kesimpulan yang sah:", o: ["Besok cerah", "Kemarin hujan", "Hari ini cerah", "Tidak ada kesimpulan"], a: 2 },
+                { q: "Berapa banyak huruf 'A' dalam kalimat: 'ALUMNI PRAKERJA BO DUA'?", o: ["3", "4", "5", "6"], a: 1 }
+            ],
+            sastra: [
+                { q: "Kutipan puisi 'Kalau sampai waktunya, Ku mau tak seorang kan merayu...' adalah dari puisi berjudul 'Aku' karya...", o: ["W.S. Rendra", "Sapardi Djoko Damono", "Chairil Anwar", "Pramoedya A.T."], a: 2 },
+                { q: "Novel legendaris 'Bumi Manusia' yang mengisahkan tokoh Minke ditulis oleh sastrawan besar...", o: ["Andrea Hirata", "Pramoedya Ananta Toer", "Ahmad Fuadi", "Habiburrahman"], a: 1 },
+                { q: "Majas (gaya bahasa) yang mengungkapkan sesuatu secara melebih-lebihkan dari kenyataannya disebut...", o: ["Personifikasi", "Metafora", "Hiperbola", "Ironi"], a: 2 },
+                { q: "Cerita rakyat Malin Kundang si anak durhaka berasal dari provinsi...", o: ["Sumatera Utara", "Sumatera Barat", "Jawa Barat", "Kalimantan Selatan"], a: 1 },
+                { q: "'Habis Gelap Terbitlah Terang' adalah kumpulan surat yang ditulis oleh...", o: ["Cut Nyak Dien", "Dewi Sartika", "R.A. Kartini", "Martha C. Tiahahu"], a: 2 }
+            ],
+            ekonomi: [
+                { q: "Harga daging sapi naik drastis jelang Lebaran. Dalam ilmu ekonomi hal ini terjadi karena...", o: ["Inflasi tahunan", "Permintaan naik, Penawaran tetap", "Monopoli pasar", "Nilai Rupiah turun"], a: 1 },
+                { q: "Berdasarkan data, salah satu negara pasar utama wisatawan mancanegara ke Indonesia adalah...", o: ["Argentina", "Malaysia", "Mesir", "Brasil"], a: 1 }, 
+                { q: "Bapak Koperasi Indonesia yang juga merupakan Wakil Presiden pertama RI adalah...", o: ["Soekarno", "Mohammad Hatta", "Sutan Sjahrir", "Adam Malik"], a: 1 },
+                { q: "Kondisi di mana harga barang-barang secara umum mengalami kenaikan secara terus-menerus disebut...", o: ["Deflasi", "Devaluasi", "Inflasi", "Depresiasi"], a: 2 },
+                { q: "Lembaga negara yang bertugas mengatur dan menjaga kestabilan nilai Rupiah adalah...", o: ["OJK", "Kementerian Keuangan", "Bank Indonesia (BI)", "Bursa Efek"], a: 2 }
+            ],
+            hukum: [
+                { q: "Jika terjadi sengketa perselisihan hasil Pemilihan Umum, lembaga yang berwenang mengadilinya adalah...", o: ["Mahkamah Agung", "KPU", "Mahkamah Konstitusi", "DPR"], a: 2 },
+                { q: "Hukum dasar tertulis tertinggi yang berlaku di negara Republik Indonesia adalah...", o: ["Pancasila", "Ketetapan MPR", "Undang-Undang", "UUD 1945"], a: 3 },
+                { q: "Lembaga negara yang memiliki kewenangan untuk memberantas tindak pidana korupsi di Indonesia adalah...", o: ["Polri", "Kejaksaan Agung", "KPK", "Mahkamah Agung"], a: 2 },
+                { q: "Usia minimal untuk mendapatkan Kartu Tanda Penduduk (KTP) berdasarkan aturan adalah...", o: ["15 Tahun", "17 Tahun", "18 Tahun", "21 Tahun"], a: 1 },
+                { q: "Hak Cipta atas sebuah lagu atau buku termasuk ke dalam ranah hukum...", o: ["Hukum Pidana", "Hukum Tata Negara", "Hukum Kekayaan Intelektual", "Hukum Internasional"], a: 2 }
+            ]
+        };
+
+        const categoryNames = { sejarah: "Sejarah", islam: "Islam", kristen_islam: "Agama", logika: "Logika", sastra: "Sastra", ekonomi: "Ekonomi", hukum: "Hukum" };
+        let sessionQuestions = [], currentQuestionIndex = 0, score = 0, playerName = "", timeLeft = 15, timerInterval, isAnswering = false;
+
+        function startGame() {
+            const name = document.getElementById('player-name').value.trim();
+            const errorMsg = document.getElementById('input-error');
+            if (name === "" || selectedAvatar === "") { errorMsg.classList.remove('hidden'); return; }
+            errorMsg.classList.add('hidden'); playerName = name;
+            
+            sessionQuestions = [];
+            for (const key in questionBank) {
+                const qs = questionBank[key];
+                sessionQuestions.push({ category: categoryNames[key], ...qs[Math.floor(Math.random() * qs.length)] });
+            }
+            sessionQuestions.sort(() => Math.random() - 0.5);
+            
+            currentQuestionIndex = 0; score = 0; document.getElementById('score-display').innerText = "0";
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden'); document.getElementById('game-screen').classList.add('fade-in');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            isAnswering = false; const q = sessionQuestions[currentQuestionIndex];
+            document.getElementById('question-number').innerText = currentQuestionIndex + 1;
+            document.getElementById('category-badge').innerText = q.category;
+            document.getElementById('question-text').innerText = q.q;
+            document.getElementById('progress-bar').style.width = `${((currentQuestionIndex) / sessionQuestions.length) * 100}%`;
+
+            const optionsContainer = document.getElementById('options-container'); optionsContainer.innerHTML = '';
+            q.o.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn w-full text-left p-3 rounded-xl border-2 font-bold focus:outline-none text-sm md:text-base";
+                btn.innerHTML = `<span class="inline-block w-7 h-7 bg-gray-100 rounded-full text-center leading-7 mr-2 text-gray-600 font-extrabold letter-badge text-sm">${String.fromCharCode(65 + index)}</span> <span class="opt-text">${opt}</span>`;
+                btn.onclick = () => selectAnswer(index, btn); optionsContainer.appendChild(btn);
+            });
+
+            timeLeft = 15; document.getElementById('timer-display').innerText = timeLeft;
+            document.getElementById('timer-display').parentElement.classList.replace('bg-red-600', 'bg-emerald-800');
+            document.getElementById('timer-display').parentElement.classList.remove('animate-pulse');
+            clearInterval(timerInterval); timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            timeLeft--; document.getElementById('timer-display').innerText = timeLeft;
+            if (timeLeft === 5) {
+                document.getElementById('timer-display').parentElement.classList.replace('bg-emerald-800', 'bg-red-600');
+                document.getElementById('timer-display').parentElement.classList.add('animate-pulse');
+            }
+            if (timeLeft <= 0) { clearInterval(timerInterval); handleTimeOut(); }
+        }
+
+        function handleTimeOut() {
+            if (isAnswering) return; isAnswering = true; showFeedback(false, "Waktu Habis!");
+            const buttons = document.getElementById('options-container').querySelectorAll('button');
+            buttons.forEach((btn, idx) => {
+                btn.disabled = true; btn.classList.add('opacity-40', 'cursor-not-allowed');
+                if (idx === sessionQuestions[currentQuestionIndex].a) highlightCorrect(btn);
+            });
+            setTimeout(nextQuestion, 2000);
+        }
+
+        function selectAnswer(selectedIndex, selectedBtn) {
+            if (isAnswering) return; isAnswering = true; clearInterval(timerInterval);
+            document.getElementById('timer-display').parentElement.classList.remove('animate-pulse');
+            const q = sessionQuestions[currentQuestionIndex];
+            const buttons = document.getElementById('options-container').querySelectorAll('button');
+            buttons.forEach(btn => { btn.disabled = true; btn.classList.add('cursor-not-allowed', 'opacity-50'); });
+            selectedBtn.classList.remove('opacity-50');
+            if (selectedIndex === q.a) {
+                highlightCorrect(selectedBtn);
+                const pointsEarned = 1000 + (timeLeft * 50); score += pointsEarned; animateScore(score);
+                showFeedback(true, `+${pointsEarned}`);
+            } else {
+                highlightWrong(selectedBtn); highlightCorrect(buttons[q.a]); showFeedback(false, "Salah!");
+            }
+            setTimeout(nextQuestion, 2000);
+        }
+
+        function highlightCorrect(btn) {
+            btn.classList.remove('opacity-50', 'opacity-40');
+            btn.style.borderColor = '#10b981'; btn.style.backgroundColor = '#d1fae5'; btn.style.color = '#065f46';
+            btn.querySelector('.letter-badge').style.backgroundColor = '#10b981'; btn.querySelector('.letter-badge').style.color = '#ffffff';
+        }
+        function highlightWrong(btn) {
+            btn.style.borderColor = '#ef4444'; btn.style.backgroundColor = '#fee2e2'; btn.style.color = '#991b1b';
+            btn.querySelector('.letter-badge').style.backgroundColor = '#ef4444'; btn.querySelector('.letter-badge').style.color = '#ffffff';
+        }
+
+        function showFeedback(isCorrect, text) {
+            const container = document.getElementById('feedback-container'); const content = document.getElementById('feedback-content');
+            container.classList.remove('hidden');
+            content.innerHTML = isCorrect 
+                ? `<div class="bg-white rounded-full p-3 shadow-xl mb-2"><i class="fa-solid fa-check text-4xl text-green-500"></i></div><span class="font-black text-2xl text-green-600 drop-shadow-md">${text}</span>`
+                : `<div class="bg-white rounded-full p-3 shadow-xl mb-2"><i class="fa-solid fa-xmark text-4xl text-red-500"></i></div><span class="font-black text-2xl text-red-600 drop-shadow-md">${text}</span>`;
+            content.style.transform = 'scale(1)'; setTimeout(() => { container.classList.add('hidden'); content.style.transform = 'scale(1.5)'; }, 1300);
+        }
+
+        function animateScore(targetScore) {
+            let display = document.getElementById('score-display'); let start = parseInt(display.innerText.replace(/,/g, ''));
+            let duration = 600, startTime = null;
+            const step = (timestamp) => {
+                if (!startTime) startTime = timestamp; const progress = Math.min((timestamp - startTime) / duration, 1);
+                display.innerText = Math.floor((progress * (2 - progress)) * (targetScore - start) + start).toLocaleString('id-ID');
+                if (progress < 1) window.requestAnimationFrame(step); else display.innerText = targetScore.toLocaleString('id-ID');
+            }; window.requestAnimationFrame(step);
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < sessionQuestions.length) loadQuestion(); else endGame();
+        }
+
+        function getRank(finalScore) {
+            if (finalScore <= 3000) return { title: "Kerupuk Melempem", desc: "Waduh, wawasan agak melempem nih." };
+            if (finalScore <= 7000) return { title: "Ketupat Sayur Standar", desc: "Lumayan gurih buat diajak ngobrol!" };
+            if (finalScore <= 11000) return { title: "Opor Ayam Kental", desc: "Mantap! Wawasan luas & respon cepat." };
+            return { title: "Rendang Premium", desc: "Suhu BO2 Prakerja! Valid no debat!" };
+        }
+
+        // --- FETCH POST (SIMPAN SKOR) ---
+        async function endGame() {
+            document.getElementById('game-screen').classList.add('hidden'); document.getElementById('progress-bar').style.width = `100%`;
+            const rankInfo = getRank(score);
+            document.getElementById('final-avatar').innerText = selectedAvatar; document.getElementById('final-name').innerText = playerName;
+            document.getElementById('final-score').innerText = score.toLocaleString('id-ID');
+            document.getElementById('final-rank').innerText = rankInfo.title; document.getElementById('rank-description').innerText = rankInfo.desc;
+            document.getElementById('result-screen').classList.remove('hidden'); document.getElementById('result-screen').classList.add('fade-in');
+
+            try {
+                await fetch('/.netlify/functions/scores', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: playerName, avatar: selectedAvatar, score: score, rank: rankInfo.title })
+                });
+            } catch (error) { console.error("Gagal simpan skor ke Postgres.", error); }
+        }
+
+        // --- FETCH GET (AMBIL SKOR) ---
+        async function showLeaderboard() {
+            document.getElementById('leaderboard-screen').classList.remove('hidden'); document.getElementById('leaderboard-screen').style.display = 'flex';
+            const listContainer = document.getElementById('leaderboard-list');
+            listContainer.innerHTML = `<div class="text-center text-gray-500 mt-10"><i class="fa-solid fa-circle-notch fa-spin text-2xl mb-2"></i><br>Mencari data dari Server...</div>`;
+
+            try {
+                const response = await fetch('/.netlify/functions/scores');
+                if (!response.ok) throw new Error("API tidak merespon");
+                const scores = await response.json();
+                
+                if(scores.length === 0) { listContainer.innerHTML = `<div class="text-center text-gray-500 mt-10">Belum ada pemain. Jadilah yang pertama!</div>`; return; }
+
+                listContainer.innerHTML = '';
+                scores.forEach((s, index) => {
+                    let medal = ''; let bgClass = 'bg-white border-gray-200';
+                    if (index === 0) { medal = '🥇'; bgClass = 'bg-yellow-50 border-yellow-300'; }
+                    else if (index === 1) { medal = '🥈'; bgClass = 'bg-gray-100 border-gray-300'; }
+                    else if (index === 2) { medal = '🥉'; bgClass = 'bg-orange-50 border-orange-200'; }
+
+                    const item = document.createElement('div');
+                    item.className = `flex items-center justify-between p-3 mb-2 rounded-xl border ${bgClass} shadow-sm transition-transform hover:scale-[1.02]`;
+                    item.innerHTML = `
+                        <div class="flex items-center">
+                            <span class="w-6 font-bold text-gray-400 text-sm">${index + 1}.</span>
+                            <span class="text-3xl mx-2">${s.avatar || '👤'}</span>
+                            <div class="flex flex-col"><span class="font-bold text-gray-800 text-[15px]">${s.name} ${medal}</span><span class="text-[10px] text-gray-500">${s.rank}</span></div>
+                        </div>
+                        <div class="font-black text-emerald-600 text-lg">${parseInt(s.score).toLocaleString('id-ID')}</div>
+                    `;
+                    listContainer.appendChild(item);
+                });
+            } catch (error) {
+                listContainer.innerHTML = `<div class="text-center text-red-500 mt-10"><i class="fa-solid fa-triangle-exclamation text-3xl mb-2"></i><br>Akses Database Gagal!<br><br><span class="text-sm text-gray-600 block px-4">Pastikan file scores.mjs sudah di-deploy dengan benar di Netlify.</span></div>`;
+            }
+        }
+
+        function closeLeaderboard() { document.getElementById('leaderboard-screen').classList.add('hidden'); document.getElementById('leaderboard-screen').style.display = 'none'; }
+
+        function shareToWA() {
+            const rankTitle = document.getElementById('final-rank').innerText; const finalScore = score.toLocaleString('id-ID');
+            let gameUrl = window.location.href; if(gameUrl.startsWith('file://') || gameUrl.includes('localhost')) { gameUrl = "(Link web Netlify)"; }
+            const text = `*Minal Aidin wal Faizin!* 🙏\n\nSaya *${playerName}* ${selectedAvatar} baru saja masuk Papan Skor Kuis Spesial Lebaran BO2!\n\n🏆 Gelar: *${rankTitle}*\n⭐ Skor: *${finalScore}*\n\nBerani geser posisi saya di Papan Skor Top 10? Coba main di sini:\n${gameUrl}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        function resetGame() {
+            document.getElementById('result-screen').classList.add('hidden'); document.getElementById('start-screen').classList.remove('hidden');
+            document.getElementById('start-screen').classList.add('fade-in'); document.getElementById('player-name').value = ''; 
+            selectedAvatar = ''; document.querySelectorAll('.avatar-btn').forEach(b => b.classList.remove('selected'));
+        }
+
+        document.getElementById('player-name').addEventListener("keypress", function(event) { if (event.key === "Enter") { event.preventDefault(); startGame(); } });
+    </script>
+</body>
+</html>
+
