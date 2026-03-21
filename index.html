@@ -26,10 +26,6 @@
         .avatar-btn { font-size: 1.8rem; transition: all 0.2s; border: 3px solid transparent; cursor: pointer; color: #047857; }
         .avatar-btn.selected { border-color: #10b981; background-color: #d1fae5; transform: scale(1.1); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); color: #064e3b; }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; } .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; } .custom-scrollbar::-webkit-scrollbar-thumb { background: #10b981; border-radius: 10px; }
-        
-        /* Animasi Angka Countdown */
-        @keyframes pop { 0% { transform: scale(0.5); opacity: 0; } 50% { transform: scale(1.5); opacity: 1; } 100% { transform: scale(1); opacity: 0; } }
-        .animate-pop { animation: pop 1s infinite; }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 text-gray-800">
@@ -51,12 +47,17 @@
             <button onclick="prepareGame()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-2xl shadow-lg transition duration-200 transform hover:scale-[1.02] text-lg flex justify-center items-center">
                 Mulai Main <i class="fa-solid fa-rocket ml-2"></i>
             </button>
-            <p id="audio-hint" class="text-[10px] text-gray-400 mt-2"><i class="fa-solid fa-volume-high"></i> Nyalakan suara untuk pengalaman terbaik</p>
+            
+            <button onclick="showLeaderboard()" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-2xl shadow-lg transition duration-200 transform hover:scale-[1.02] text-lg mt-3 flex justify-center items-center">
+                <i class="fa-solid fa-trophy mr-2"></i> Papan Skor
+            </button>
+            
+            <p id="audio-hint" class="text-[10px] text-gray-400 mt-3"><i class="fa-solid fa-volume-high"></i> Nyalakan suara untuk pengalaman terbaik</p>
         </div>
 
-        <div id="countdown-screen" class="hidden absolute inset-0 bg-emerald-700 z-50 flex flex-col items-center justify-center text-white">
-            <h2 class="text-2xl font-bold mb-4">Bersiaplah...</h2>
-            <div id="countdown-number" class="text-8xl font-black text-yellow-300 animate-pop">5</div>
+        <div id="countdown-screen" class="hidden absolute inset-0 bg-emerald-800 z-[100] flex flex-col items-center justify-center text-white h-full w-full">
+            <h2 class="text-3xl font-bold mb-6">Bersiaplah...</h2>
+            <div id="countdown-number" class="text-9xl font-black text-yellow-400 drop-shadow-lg animate-pulse">5</div>
         </div>
 
         <div id="game-screen" class="hidden flex-col h-full overflow-y-auto">
@@ -140,6 +141,9 @@
         
         const bgmGameplay = new Audio('bgm-gameplay.mp3'); bgmGameplay.loop = true;
         const sfxTick = new Audio('sfx-tick.mp3'); sfxTick.loop = true;
+        
+        // SUARA BENAR & SALAH
+        const sfxRight = new Audio('sfx-right.mp3');
         const sfxTimeout = new Audio('sfx-timeout.mp3');
         const bgmEnding = new Audio('bgm-ending.mp3'); bgmEnding.loop = true;
 
@@ -150,25 +154,23 @@
             audioObj.currentTime = 0;
             const playPromise = audioObj.play();
             if (playPromise !== undefined) {
-                playPromise.catch(error => { console.log("Audio play blocked (Need user interaction)"); });
+                playPromise.catch(error => { console.log("Audio play blocked"); });
             }
         }
         function stopAudio(audioObj) { if (audioObj) audioObj.pause(); }
 
-        // Memancing Audio Play saat user tap layar pertama kali
         document.body.addEventListener('click', () => {
             if (!audioInitialized) { playAudio(bgmOpening); audioInitialized = true; }
         }, { once: true });
 
 
-        // --- 2. SETUP KARAKTER (30 IKON FONT AWESOME) ---
-        const allIcons = ['fa-user-astronaut', 'fa-user-ninja', 'fa-user-secret', 'fa-user-tie', 'fa-user-graduate', 'fa-user-doctor', 'fa-snowman', 'fa-ghost', 'fa-skull', 'fa-robot', 'fa-mask', 'fa-cat', 'fa-dog', 'fa-dragon', 'fa-horse', 'fa-frog', 'fa-fish', 'fa-spider', 'fa-bug', 'fa-crow', 'fa-dove', 'fa-hippo', 'fa-otter', 'fa-kiwi-bird', 'fa-worm', 'fa-mosquito', 'fa-locust', 'fa-shrimp', 'fa-poop', 'fa-jedi'];
+        // --- 2. SETUP KARAKTER (30 IKON AMAN FONT AWESOME) ---
+        const allIcons = ['fa-user', 'fa-user-tie', 'fa-user-graduate', 'fa-user-ninja', 'fa-user-astronaut', 'fa-user-secret', 'fa-user-doctor', 'fa-ghost', 'fa-skull', 'fa-robot', 'fa-cat', 'fa-dog', 'fa-horse', 'fa-frog', 'fa-fish', 'fa-spider', 'fa-bug', 'fa-crow', 'fa-dove', 'fa-hippo', 'fa-otter', 'fa-worm', 'fa-snowman', 'fa-mask', 'fa-poop', 'fa-motorcycle', 'fa-car', 'fa-plane', 'fa-rocket', 'fa-ship'];
         let selectedAvatarClass = '';
         
         function renderAvatars() {
             const avatarGrid = document.getElementById('avatar-grid');
             avatarGrid.innerHTML = '';
-            // Acak dan ambil 10 icon
             const random10 = allIcons.sort(() => 0.5 - Math.random()).slice(0, 10);
             
             random10.forEach(icon => {
@@ -183,7 +185,7 @@
                 avatarGrid.appendChild(btn);
             });
         }
-        renderAvatars(); // Panggil saat web diload
+        renderAvatars();
 
 
         // --- 3. BANK SOAL (8 Kategori @ 15 Soal) ---
@@ -337,26 +339,21 @@
             if (name === "" || selectedAvatarClass === "") { errorMsg.classList.remove('hidden'); return; }
             errorMsg.classList.add('hidden'); playerName = name;
             
-            // Generate 8 Soal (1 dari tiap kategori)
             sessionQuestions = [];
             for (const key in questionBank) {
                 const qs = questionBank[key];
                 const rawQ = qs[Math.floor(Math.random() * qs.length)];
                 
-                // --- RANDOMISASI OPSI JAWABAN (A,B,C,D) ---
                 const originalOptions = [...rawQ.o];
                 const correctText = originalOptions[rawQ.a];
                 const shuffledOptions = [...originalOptions].sort(() => Math.random() - 0.5);
                 const newCorrectIndex = shuffledOptions.indexOf(correctText);
                 
                 sessionQuestions.push({ 
-                    category: categoryNames[key], 
-                    q: rawQ.q,
-                    o: shuffledOptions,
-                    a: newCorrectIndex 
+                    category: categoryNames[key], q: rawQ.q, o: shuffledOptions, a: newCorrectIndex 
                 });
             }
-            sessionQuestions.sort(() => Math.random() - 0.5); // Acak urutan 8 soal
+            sessionQuestions.sort(() => Math.random() - 0.5);
             
             startGame();
         }
@@ -375,11 +372,6 @@
                 count--;
                 if(count > 0) {
                     document.getElementById('countdown-number').innerText = count;
-                    // Reset animasi
-                    const numEl = document.getElementById('countdown-number');
-                    numEl.classList.remove('animate-pop');
-                    void numEl.offsetWidth; 
-                    numEl.classList.add('animate-pop');
                 } else {
                     clearInterval(countInterval);
                     document.getElementById('countdown-screen').classList.add('hidden');
@@ -409,22 +401,26 @@
             timeLeft = 15; document.getElementById('timer-display').innerText = timeLeft;
             document.getElementById('timer-display').parentElement.classList.replace('bg-red-600', 'bg-emerald-800');
             document.getElementById('timer-display').parentElement.classList.remove('animate-pulse');
+            
+            // Putar bunyi tik tok dari awal soal muncul
+            playAudio(sfxTick);
+            
             clearInterval(timerInterval); timerInterval = setInterval(updateTimer, 1000);
         }
 
         function updateTimer() {
             timeLeft--; document.getElementById('timer-display').innerText = timeLeft;
             if (timeLeft === 5) {
+                // Beri efek merah kedip di layar saat 5 detik terakhir
                 document.getElementById('timer-display').parentElement.classList.replace('bg-emerald-800', 'bg-red-600');
                 document.getElementById('timer-display').parentElement.classList.add('animate-pulse');
-                playAudio(sfxTick); // SFX Detik Tegang
             }
             if (timeLeft <= 0) { clearInterval(timerInterval); handleTimeOut(); }
         }
 
         function handleTimeOut() {
             if (isAnswering) return; isAnswering = true; 
-            stopAudio(bgmGameplay); stopAudio(sfxTick); playAudio(sfxTimeout);
+            stopAudio(sfxTick); playAudio(sfxTimeout);
             showFeedback(false, "Waktu Habis!");
             const buttons = document.getElementById('options-container').querySelectorAll('button');
             buttons.forEach((btn, idx) => {
@@ -446,10 +442,13 @@
             
             if (selectedIndex === q.a) {
                 highlightCorrect(selectedBtn);
+                playAudio(sfxRight); // SUARA BENAR
                 const pointsEarned = 1000 + (timeLeft * 50); score += pointsEarned; animateScore(score);
                 showFeedback(true, `+${pointsEarned}`);
             } else {
-                highlightWrong(selectedBtn); highlightCorrect(buttons[q.a]); showFeedback(false, "Salah!");
+                highlightWrong(selectedBtn); highlightCorrect(buttons[q.a]); 
+                playAudio(sfxTimeout); // SUARA SALAH
+                showFeedback(false, "Salah!");
             }
             setTimeout(nextQuestion, 1500);
         }
@@ -512,7 +511,6 @@
             document.getElementById('result-screen').classList.remove('hidden'); document.getElementById('result-screen').classList.add('fade-in');
 
             try {
-                // Konversi ikon ke teks sederhana sebelum disimpan (mencegah error HTML injection)
                 const avatarIconStr = selectedAvatarClass.match(/fa-[a-z-]+/g).join(' ');
                 await fetch('/.netlify/functions/scores', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
