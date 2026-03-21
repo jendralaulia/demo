@@ -23,9 +23,20 @@ export default async (req, context) => {
         }
     }
 
-    // 2. MENYIMPAN SKOR BARU
+    // 2. MENYIMPAN SKOR BARU (DENGAN FIX BUG PERCOBAAN PERTAMA)
     if (req.method === 'POST') {
         try {
+            // Pastikan tabel dibuat jika belum ada sebelum menyimpan skor
+            await sql`
+                CREATE TABLE IF NOT EXISTS leaderboard (
+                    id SERIAL PRIMARY KEY,
+                    name VARCHAR(50),
+                    avatar VARCHAR(50),
+                    score INT,
+                    rank VARCHAR(50),
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            `;
             const data = await req.json();
             await sql`
                 INSERT INTO leaderboard (name, avatar, score, rank) 
@@ -37,12 +48,11 @@ export default async (req, context) => {
         }
     }
 
-    // 3. FITUR RAHASIA: RESET PAPAN SKOR
+    // 3. FITUR RAHASIA: RESET PAPAN SKOR (Password: 19AG)
     if (req.method === 'DELETE') {
         try {
             const data = await req.json();
             if (data.password === '19AG') {
-                // Menghapus tabel lama untuk mereset data
                 await sql`DROP TABLE IF EXISTS leaderboard`; 
                 return new Response(JSON.stringify({ success: true, message: "Papan skor berhasil direset!" }), { status: 200 });
             } else {
