@@ -167,17 +167,24 @@
         }
         function stopAudio(audioObj) { if (audioObj) audioObj.pause(); }
 
-        // --- 2. LOADING SCREEN LOGIC ---
-        // Saat halaman selesai dimuat, tunggu 1,5 detik lalu munculkan tombol MASUK
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('loading-spinner').classList.add('hidden');
-                document.getElementById('enter-btn-container').classList.remove('hidden');
-                document.getElementById('enter-btn-container').classList.add('flex');
-            }, 1500);
-        });
+               // --- 2. LOADING SCREEN LOGIC (FOKUS KE BGM OPENING) ---
+        function showEnterButton() {
+            const spinner = document.getElementById('loading-spinner');
+            const btnContainer = document.getElementById('enter-btn-container');
+            if(spinner && !spinner.classList.contains('hidden')) {
+                spinner.classList.add('hidden');
+                btnContainer.classList.remove('hidden');
+                btnContainer.classList.add('flex');
+            }
+        }
 
-        // Fungsi saat tombol MASUK diklik (Memenuhi syarat browser untuk Play Audio)
+        // Syarat 1: Jika bgm-opening sudah siap diputar, langsung munculkan tombol
+        bgmOpening.addEventListener('canplaythrough', showEnterButton, { once: true });
+
+        // Syarat 2 (Failsafe Darurat): Maksimal tunggu 3 detik, paksa tombol muncul agar tidak stuck!
+        setTimeout(showEnterButton, 3000);
+
+        // Fungsi saat tombol MASUK diklik
         function enterHome() {
             document.getElementById('loading-screen').style.opacity = "0";
             setTimeout(() => {
@@ -187,6 +194,7 @@
                 playAudio(bgmOpening); // MUSIK OPENING BERJALAN!
             }, 500);
         }
+
 
 
         // --- 3. SETUP KARAKTER (30 IKON AMAN) ---
