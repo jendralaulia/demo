@@ -6,7 +6,7 @@
     
     <meta property="og:title" content="Kuis Spesial Lebaran BO2 Prakerja" />
     <meta property="og:description" content="Uji wawasanmu dan raih posisi puncak di Papan Skor Top 10 Grup BO2!" />
-    <meta property="og:image" content="https://drive.google.com/uc?export=view&id=1FRLzW_EW5cT8PoWVD2z6CZtFEHP7nHmW" />
+    <meta property="og:image" content="https://drive.google.com/thumbnail?id=1FRLzW_EW5cT8PoWVD2z6CZtFEHP7nHmW&sz=w800" />
     <meta property="og:type" content="website" />
 
     <title>Kuis Spesial Lebaran BO2 Prakerja</title>
@@ -28,17 +28,29 @@
         .custom-scrollbar::-webkit-scrollbar { width: 6px; } .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; } .custom-scrollbar::-webkit-scrollbar-thumb { background: #10b981; border-radius: 10px; }
         .pulse-btn { animation: pulseBtn 1.5s infinite; }
         @keyframes pulseBtn { 0% { box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(250, 204, 21, 0); } 100% { box-shadow: 0 0 0 0 rgba(250, 204, 21, 0); } }
+        
+        /* --- ANIMASI COUNTDOWN BARU --- */
+        @keyframes pop {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop {
+            animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(5deg); } }
+        .animate-float { animation: float 3s ease-in-out infinite; }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 text-gray-800">
 
-    <div id="loading-screen" class="absolute inset-0 bg-emerald-900 z-[200] flex flex-col items-center justify-center text-white transition-opacity duration-500">
+    <div id="loading-screen" class="absolute inset-0 bg-emerald-950 z-[200] flex flex-col items-center justify-center text-white transition-opacity duration-500">
         <div id="loading-spinner" class="flex flex-col items-center">
             <i class="fa-solid fa-spinner fa-spin text-6xl text-yellow-400 mb-4"></i>
-            <p class="text-lg font-bold animate-pulse text-emerald-100">Memuat Aset Game...</p>
+            <p class="text-lg font-bold animate-pulse text-emerald-100">Memuat Aset BO2...</p>
         </div>
         <div id="enter-btn-container" class="hidden flex-col items-center">
-            <div class="text-yellow-400 text-7xl mb-6 drop-shadow-lg"><i class="fa-solid fa-mosque"></i></div>
+            <img src="https://drive.google.com/thumbnail?id=1FRLzW_EW5cT8PoWVD2z6CZtFEHP7nHmW&sz=w800" alt="Ornamen BO2" class="w-48 h-48 object-contain drop-shadow-2xl animate-float mb-6 rounded-full border-4 border-yellow-400 p-2 bg-white">
             <h1 class="text-3xl font-extrabold mb-8 text-center leading-tight">Kuis Spesial<br>Lebaran BO2</h1>
             <button onclick="enterHome()" class="bg-yellow-500 hover:bg-yellow-600 text-emerald-900 font-black py-4 px-10 rounded-full text-xl pulse-btn transition transform hover:scale-110">
                 MASUK <i class="fa-solid fa-arrow-right ml-2"></i>
@@ -63,15 +75,21 @@
             <button onclick="prepareGame()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-2xl shadow-lg transition duration-200 transform hover:scale-[1.02] text-lg flex justify-center items-center">
                 Mulai Main <i class="fa-solid fa-rocket ml-2"></i>
             </button>
-            
             <button onclick="showLeaderboard()" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-2xl shadow-lg transition duration-200 transform hover:scale-[1.02] text-lg mt-3 flex justify-center items-center">
                 <i class="fa-solid fa-trophy mr-2"></i> Papan Skor
             </button>
         </div>
 
-        <div id="countdown-screen" class="hidden absolute inset-0 bg-emerald-800 z-[100] flex flex-col items-center justify-center text-white h-full w-full">
-            <h2 class="text-3xl font-bold mb-6 drop-shadow-md">Bersiaplah...</h2>
-            <img id="countdown-gif" src="" alt="Countdown 54321" class="w-64 h-64 object-contain drop-shadow-2xl rounded-3xl">
+        <div id="countdown-screen" class="hidden absolute inset-0 bg-emerald-900 z-[100] flex flex-col items-center justify-center text-white h-full w-full">
+            <h1 id="countdown-title" class="text-2xl md:text-3xl text-emerald-200 mb-8 tracking-widest uppercase font-semibold transition-opacity duration-300">Siap-siap...</h1>
+            
+            <div id="countdown-circle" class="relative flex items-center justify-center w-64 h-64 mx-auto rounded-full bg-emerald-800 shadow-[0_0_50px_rgba(16,185,129,0.5)] border-4 border-yellow-400/50 transition-opacity duration-300">
+                <span id="countdown-number" class="text-8xl md:text-9xl font-bold text-yellow-300 drop-shadow-[0_0_20px_rgba(253,224,71,0.8)]">5</span>
+            </div>
+
+            <div id="countdown-message" class="hidden absolute inset-0 flex items-center justify-center bg-emerald-800 z-10">
+                <h2 class="text-6xl md:text-7xl font-extrabold text-yellow-300 animate-bounce drop-shadow-lg">MULAI!</h2>
+            </div>
         </div>
 
         <div id="game-screen" class="hidden flex-col h-full overflow-y-auto">
@@ -110,7 +128,7 @@
             <p class="text-gray-600 mb-3 text-md">Permainan selesai, <span id="final-avatar" class="text-emerald-600"></span> <span id="final-name" class="font-bold text-gray-900">Nama</span>!</p>
             
             <div class="mb-4 rounded-xl overflow-hidden shadow-md border-2 border-yellow-400 max-h-40 relative bg-gray-100 flex justify-center items-center">
-                <img src="https://drive.google.com/uc?export=view&id=1FRLzW_EW5cT8PoWVD2z6CZtFEHP7nHmW" alt="Spesial Lebaran" class="object-cover w-full h-full" onerror="this.src='https://via.placeholder.com/400x200?text=Selamat+Lebaran+BO2';">
+                <img src="https://drive.google.com/thumbnail?id=1FRLzW_EW5cT8PoWVD2z6CZtFEHP7nHmW&sz=w800" alt="Spesial Lebaran" class="object-cover w-full h-full" onerror="this.src='https://via.placeholder.com/400x200?text=Selamat+Lebaran+BO2';">
             </div>
 
             <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl p-4 mb-4 border border-emerald-200 shadow-inner">
@@ -150,94 +168,79 @@
     <script>
         // --- 1. SETUP AUDIO ---
         const bgmOpening = new Audio('bgm-opening.mp3'); bgmOpening.loop = true;
-        const sfxCountdown = new Audio('sfx-countdown.mp3');
-        sfxCountdown.playbackRate = 2.0; 
-        
+        const sfxCountdown = new Audio('sfx-countdown.mp3'); sfxCountdown.playbackRate = 2.0; 
         const bgmGameplay = new Audio('bgm-gameplay.mp3'); bgmGameplay.loop = true;
         const sfxTick = new Audio('sfx-tick.mp3'); sfxTick.loop = true;
         const sfxRight = new Audio('sfx-right.mp3');
         const sfxTimeout = new Audio('sfx-timeout.mp3');
         const bgmEnding = new Audio('bgm-ending.mp3'); bgmEnding.loop = true;
 
+        let audioInitialized = false;
+
         function playAudio(audioObj) {
-            if (!audioObj) return;
-            audioObj.currentTime = 0;
-            const playPromise = audioObj.play();
-            if (playPromise !== undefined) playPromise.catch(e => console.log("Audio waiting for interaction", e));
+            if (!audioObj) return; audioObj.currentTime = 0;
+            audioObj.play().catch(e => console.log("Audio waiting for interaction", e));
         }
         function stopAudio(audioObj) { if (audioObj) audioObj.pause(); }
 
-               // --- 2. LOADING SCREEN LOGIC (FOKUS KE BGM OPENING) ---
+        // --- 2. LOADING SCREEN LOGIC ---
         function showEnterButton() {
             const spinner = document.getElementById('loading-spinner');
             const btnContainer = document.getElementById('enter-btn-container');
             if(spinner && !spinner.classList.contains('hidden')) {
                 spinner.classList.add('hidden');
-                btnContainer.classList.remove('hidden');
-                btnContainer.classList.add('flex');
+                btnContainer.classList.remove('hidden'); btnContainer.classList.add('flex');
             }
         }
-
-        // Syarat 1: Jika bgm-opening sudah siap diputar, langsung munculkan tombol
         bgmOpening.addEventListener('canplaythrough', showEnterButton, { once: true });
+        setTimeout(showEnterButton, 3000); // Failsafe
 
-        // Syarat 2 (Failsafe Darurat): Maksimal tunggu 3 detik, paksa tombol muncul agar tidak stuck!
-        setTimeout(showEnterButton, 3000);
-
-        // Fungsi saat tombol MASUK diklik
         function enterHome() {
             document.getElementById('loading-screen').style.opacity = "0";
             setTimeout(() => {
                 document.getElementById('loading-screen').classList.add('hidden');
                 document.getElementById('start-screen').classList.remove('hidden');
-                document.body.style.overflow = 'auto'; // Mengembalikan scroll
-                playAudio(bgmOpening); // MUSIK OPENING BERJALAN!
+                document.body.style.overflow = 'auto'; audioInitialized = true; playAudio(bgmOpening); 
             }, 500);
         }
 
-
-
-        // --- 3. SETUP KARAKTER (30 IKON AMAN) ---
+        // --- 3. SETUP KARAKTER ---
         const allIcons = ['fa-user', 'fa-user-tie', 'fa-user-graduate', 'fa-user-ninja', 'fa-user-astronaut', 'fa-user-secret', 'fa-user-doctor', 'fa-ghost', 'fa-skull', 'fa-robot', 'fa-cat', 'fa-dog', 'fa-horse', 'fa-frog', 'fa-fish', 'fa-spider', 'fa-bug', 'fa-crow', 'fa-dove', 'fa-hippo', 'fa-otter', 'fa-worm', 'fa-snowman', 'fa-mask', 'fa-poop', 'fa-motorcycle', 'fa-car', 'fa-plane', 'fa-rocket', 'fa-ship'];
         let selectedAvatarClass = '';
         
         function renderAvatars() {
-            const avatarGrid = document.getElementById('avatar-grid');
-            avatarGrid.innerHTML = '';
+            const avatarGrid = document.getElementById('avatar-grid'); avatarGrid.innerHTML = '';
             const random10 = allIcons.sort(() => 0.5 - Math.random()).slice(0, 10);
-            
             random10.forEach(icon => {
                 const btn = document.createElement('button');
                 btn.className = 'avatar-btn rounded-xl bg-white shadow-sm flex items-center justify-center p-3';
                 btn.innerHTML = `<i class="fa-solid ${icon}"></i>`;
                 btn.onclick = () => {
                     document.querySelectorAll('.avatar-btn').forEach(b => b.classList.remove('selected'));
-                    btn.classList.add('selected'); 
-                    selectedAvatarClass = `<i class="fa-solid ${icon}"></i>`;
-                };
-                avatarGrid.appendChild(btn);
+                    btn.classList.add('selected'); selectedAvatarClass = `<i class="fa-solid ${icon}"></i>`;
+                }; avatarGrid.appendChild(btn);
             });
         }
         renderAvatars();
 
-        // --- 4. BANK SOAL (120 SOAL) ---
+        // --- 4. BANK SOAL BO2 PRAKERJA (8 Kategori @ 15 Soal) ---
         const questionBank = {
             prakerja: [
                 { q: "Pada tahun berapakah Program Kartu Prakerja pertama kali diluncurkan secara resmi oleh pemerintah?", o: ["2018", "2019", "2020", "2021"], a: 2 },
-                { q: "Siapakah nama Direktur Eksekutif PMO Prakerja saat ini?", o: ["Airlangga Hartarto", "Sri Mulyani", "Denni Puspa Purbasari", "Nadiem Makarim"], a: 2 },
+                { q: "Siapakah nama Direktur Eksekutif Manajemen Pelaksana Program Kartu Prakerja (PMO) saat ini?", o: ["Airlangga Hartarto", "Sri Mulyani", "Denni Puspa Purbasari", "Nadiem Makarim"], a: 2 },
                 { q: "Berapakah batas usia minimal untuk bisa mendaftar Program Kartu Prakerja?", o: ["17 Tahun", "18 Tahun", "20 Tahun", "21 Tahun"], a: 1 },
-                { q: "Berapakah batas usia maksimal bagi pendaftar Program Kartu Prakerja?", o: ["55 Tahun", "60 Tahun", "64 Tahun", "Tidak Terbatas"], a: 2 },
+                { q: "Berapakah batas usia maksimal bagi pendaftar Program Kartu Prakerja berdasarkan aturan terbaru?", o: ["55 Tahun", "60 Tahun", "64 Tahun", "Tidak Terbatas"], a: 2 },
                 { q: "Mulai tahun 2023, Kartu Prakerja beralih dari skema bantuan sosial (semi bansos) menjadi skema...", o: ["Skema Pendidikan", "Skema Normal", "Skema Bantuan Langsung", "Skema Mahasiswa"], a: 1 },
-                { q: "Pada Skema Normal, berapakah total nilai besaran beasiswa (saldo) khusus untuk membeli pelatihan?", o: ["Rp 1.000.000", "Rp 2.400.000", "Rp 3.500.000", "Rp 4.200.000"], a: 2 },
-                { q: "Berapakah insentif pasca pelatihan (uang tunai) yang didapat peserta pada Skema Normal?", o: ["Rp 600.000", "Rp 1.000.000", "Rp 2.400.000", "Rp 3.500.000"], a: 0 },
-                { q: "Peserta akan mendapat insentif tambahan jika mengisi Survei Evaluasi. Berapa nilainya per survei?", o: ["Rp 25.000", "Rp 50.000", "Rp 100.000", "Rp 150.000"], a: 1 },
-                { q: "Berapa lama batas waktu peserta untuk membeli pelatihan pertama sejak lolos gelombang?", o: ["7 Hari", "15 Hari", "30 Hari", "60 Hari"], a: 1 },
-                { q: "Kementerian apakah yang menjadi koordinator utama dari Program Kartu Prakerja?", o: ["Kemenaker", "Kemenkeu", "Kemenko Perekonomian", "Kemendikbud"], a: 2 },
+                { q: "Pada Skema Normal, berapakah total nilai besaran beasiswa (saldo) yang diberikan KHUSUS untuk membeli pelatihan?", o: ["Rp 1.000.000", "Rp 2.400.000", "Rp 3.500.000", "Rp 4.200.000"], a: 2 },
+                { q: "Berapakah insentif pasca pelatihan (uang tunai) yang didapat peserta jika menyelesaikan pelatihan pada Skema Normal?", o: ["Rp 600.000", "Rp 1.000.000", "Rp 2.400.000", "Rp 3.500.000"], a: 0 },
+                { q: "Peserta Prakerja akan mendapatkan insentif tambahan jika mengisi Survei Evaluasi. Berapa nilai insentif per surveinya?", o: ["Rp 25.000", "Rp 50.000", "Rp 100.000", "Rp 150.000"], a: 1 },
+                { q: "Berapa lama batas waktu yang diberikan kepada peserta untuk membeli pelatihan pertama sejak dinyatakan lolos gelombang?", o: ["7 Hari", "15 Hari", "30 Hari", "60 Hari"], a: 1 },
+                { q: "Kementerian apakah yang menjadi 'induk' atau koordinator utama dari Program Kartu Prakerja?", o: ["Kemenaker", "Kemenkeu", "Kemenko Perekonomian", "Kemendikbud"], a: 2 },
                 { q: "Manakah dari golongan berikut yang TIDAK BOLEH mendaftar Kartu Prakerja?", o: ["Korban PHK", "Pencari Kerja Baru", "PNS / TNI / Polri", "Pelaku UMKM"], a: 2 },
-                { q: "Apa tujuan utama dari Program Kartu Prakerja pada Skema Normal saat ini?", o: ["Bantuan sembako", "Meningkatkan kompetensi kerja", "Memberi modal usaha", "Membayar cicilan"], a: 1 },
-                { q: "Fitur rekomendasi lowongan kerja di dashboard Prakerja disebut...", o: ["Job Recommendation", "Prakerja Karir", "Bursa Kerja", "SIPP"], a: 0 },
-                { q: "Selain pelatihan Online, Skema Normal Prakerja juga memberlakukan metode pelatihan...", o: ["Tatap Muka (Offline)", "Magang Luar Negeri", "Kuliah Jarak Jauh", "Sekolah Kedinasan"], a: 0 },
-                { q: "Program Kartu Prakerja diawasi secara ketat oleh lembaga negara, salah satunya adalah...", o: ["Komnas HAM", "BPK dan KPK", "Mahkamah Konstitusi", "KPU"], a: 1 }
+                { q: "Apa tujuan utama dari Program Kartu Prakerja pada Skema Normal saat ini?", o: ["Bantuan sembako", "Meningkatkan kompetensi kerja & kewirausahaan", "Memberi modal usaha langsung", "Membayar cicilan masyarakat"], a: 1 },
+                { q: "Dalam pelaksanaannya, terdapat fitur rekomendasi lowongan kerja di dashboard Prakerja. Fitur ini disebut...", o: ["Job Recommendation", "Prakerja Karir", "Bursa Kerja Nasional", "SIPP"], a: 0 },
+                { q: "Selain pelatihan Webinar/Online, Skema Normal Prakerja juga memberlakukan metode pelatihan...", o: ["Tatap Muka (Offline)", "Magang Luar Negeri", "Kuliah Jarak Jauh", "Sekolah Kedinasan"], a: 0 },
+                { q: "Dalam menjaga akuntabilitas, Program Kartu Prakerja selalu diawasi secara ketat oleh lembaga negara, salah satunya adalah...", o: ["Komnas HAM", "BPK dan KPK", "Mahkamah Konstitusi", "KPU"], a: 1 }
             ],
             sejarah: [
                 { q: "Naskah asli Proklamasi yang sempat dibuang ke tempat sampah diselamatkan oleh...", o: ["Sayuti Melik", "B.M. Diah", "Sukarni", "Latief H."], a: 1 },
@@ -283,7 +286,7 @@
                 { q: "Tokoh yang terkenal dengan kebijaksanaannya dan kemampuannya berbicara dengan hewan...", o: ["Daud/David", "Sulaiman/Solomon", "Yusuf/Joseph", "Musa/Moses"], a: 1 },
                 { q: "Kitab suci Zabur (Mazmur) diwahyukan kepada Nabi...", o: ["Daud/David", "Musa/Moses", "Isa/Yesus", "Ibrahim/Abraham"], a: 0 },
                 { q: "Tokoh yang dibuang ke dalam sumur oleh saudara-saudaranya dan kelak menjadi petinggi di Mesir...", o: ["Yunus", "Yusuf/Joseph", "Musa", "Ismail"], a: 1 },
-                { q: "Agama Islam, Kristen, dan Yahudi sering dikelompokkan dalam satu rumpun agama yaitu...", o: ["Agama Dharma", "Agama Samawi", "Agama Lokal", "Agama Timur"], a: 1 },
+                { q: "Agama Islam, Kristen, dan Yahudi sering dikelompokkan dalam satu rumpun agama yaitu...", o: ["Agama Dharma", "Agama Samawi (Abrahamik)", "Agama Lokal", "Agama Timur"], a: 1 },
                 { q: "Ibunda dari Nabi Isa / Yesus adalah...", o: ["Siti Hawa", "Siti Sarah", "Maryam/Maria", "Siti Hajar"], a: 2 },
                 { q: "Tokoh yang diperintahkan membuat bahtera/kapal besar untuk selamat dari air bah...", o: ["Ibrahim", "Musa", "Nuh/Noah", "Luth"], a: 2 },
                 { q: "Kota tempat Yesus dilahirkan (menurut tradisi Kristen) yang juga dihormati dalam Islam...", o: ["Yerusalem", "Nazaret", "Betlehem", "Mekkah"], a: 2 },
@@ -291,7 +294,7 @@
                 { q: "Konsep percaya kepada Satu Tuhan Yang Maha Esa dalam kedua agama disebut...", o: ["Politeisme", "Monoteisme", "Panteisme", "Animisme"], a: 1 }
             ],
             logika: [
-                { q: "Semua BO2 suka opor, sebagian yang suka opor memakai baju baru. Kesimpulannya...", o: ["Semua berbaju baru", "Sebagian BO2 berbaju baru", "Semua BO2 berbaju baru", "Tidak bisa ditarik kesimpulan"], a: 3 },
+                { q: "Semua BO2 suka opor, sebagian yang suka opor memakai baju baru. Kesimpulannya...", o: ["Semua berbaju baru", "Sebagian BO2 berbaju baru", "Semua BO2 berbaju baru", "Tidak bisa ditarik kesimpulan pasti"], a: 3 },
                 { q: "Deret: 2, 5, 10, 17, 26, ... Angka selanjutnya?", o: ["35", "37", "39", "41"], a: 1 },
                 { q: "Ayah Budi punya 5 anak: Nana, Nene, Nini, Nono. Siapa anak kelima?", o: ["Nunu", "Budi", "Nana", "Nanya"], a: 1 },
                 { q: "Berapa banyak huruf 'A' dalam kalimat: 'ALUMNI PRAKERJA BO DUA'?", o: ["3", "4", "5", "6"], a: 1 },
@@ -326,7 +329,7 @@
             ],
             ekonomi: [
                 { q: "Kondisi di mana harga barang-barang secara umum mengalami kenaikan terus-menerus disebut...", o: ["Deflasi", "Devaluasi", "Inflasi", "Depresiasi"], a: 2 },
-                { q: "Lembaga yang bertugas menjaga kestabilan nilai Rupiah adalah...", o: ["OJK", "Kemenkeu", "Bank Indonesia (BI)", "Bursa Efek"], a: 2 },
+                { q: "Lembaga yang bertugas menjaga kestabilan nilai Rupiah adalah...", o: ["OJK", "Kementerian Keuangan", "Bank Indonesia (BI)", "Bursa Efek"], a: 2 },
                 { q: "Harga daging naik drastis jelang Lebaran terjadi karena...", o: ["Inflasi tahunan", "Permintaan naik, Penawaran tetap", "Monopoli pasar", "Nilai Rupiah turun"], a: 1 },
                 { q: "Bapak Koperasi Indonesia yang juga Wakil Presiden pertama RI adalah...", o: ["Soekarno", "Mohammad Hatta", "Sutan Sjahrir", "Adam Malik"], a: 1 },
                 { q: "Tempat bertemunya penjual dan pembeli dalam ekonomi disebut...", o: ["Kantor", "Pasar", "Bank", "Bursa"], a: 1 },
@@ -387,25 +390,58 @@
             startGame();
         }
 
-        // --- 6. GIF COUNTDOWN LOGIC ---
+        // --- 6. LOGIKA COUNTDOWN ANIMASI BARU ---
         function startGame() {
             currentQuestionIndex = 0; score = 0; document.getElementById('score-display').innerText = "0";
             document.getElementById('start-screen').classList.add('hidden');
-            document.getElementById('countdown-screen').classList.remove('hidden');
+            
+            const countdownScreen = document.getElementById('countdown-screen');
+            const countdownNumber = document.getElementById('countdown-number');
+            const countdownTitle = document.getElementById('countdown-title');
+            const countdownCircle = document.getElementById('countdown-circle');
+            const countdownMessage = document.getElementById('countdown-message');
+            
+            // Reset state layar countdown
+            countdownScreen.classList.remove('hidden');
+            countdownMessage.classList.add('hidden');
+            countdownTitle.style.opacity = '1';
+            countdownCircle.style.opacity = '1';
 
-            stopAudio(bgmOpening);
+            stopAudio(bgmOpening); 
             playAudio(sfxCountdown);
 
-            // Pasang / Restart GIF (Menambahkan parameter waktu agar GIF ter-reset ke awal)
-            document.getElementById('countdown-gif').src = "countdown.gif?t=" + new Date().getTime();
+            let count = 5;
+            countdownNumber.innerText = count;
+            
+            // Pemicu Animasi Pertama Kali (Trik Reflow)
+            function triggerAnim() {
+                countdownNumber.classList.remove('animate-pop');
+                void countdownNumber.offsetWidth; 
+                countdownNumber.classList.add('animate-pop');
+            }
+            triggerAnim();
 
-            // Tunggu 5 detik (sesuai durasi GIF/SFX) lalu pindah ke soal
-            setTimeout(() => {
-                document.getElementById('countdown-screen').classList.add('hidden');
-                document.getElementById('game-screen').classList.remove('hidden');
-                playAudio(bgmGameplay);
-                loadQuestion();
-            }, 5000);
+            const countInterval = setInterval(() => {
+                count--;
+                if(count > 0) {
+                    countdownNumber.innerText = count;
+                    triggerAnim();
+                } else {
+                    clearInterval(countInterval);
+                    
+                    // Efek "MULAI!" di layar
+                    countdownTitle.style.opacity = '0';
+                    countdownCircle.style.opacity = '0';
+                    countdownMessage.classList.remove('hidden');
+                    
+                    setTimeout(() => {
+                        countdownScreen.classList.add('hidden');
+                        document.getElementById('game-screen').classList.remove('hidden');
+                        playAudio(bgmGameplay); 
+                        loadQuestion();
+                    }, 800); // Tahan pesan "MULAI" selama 0.8 detik sebelum masuk game
+                }
+            }, 1000);
         }
 
         // --- 7. GAMEPLAY LOGIC ---
@@ -428,7 +464,7 @@
             document.getElementById('timer-display').parentElement.classList.replace('bg-red-600', 'bg-emerald-800');
             document.getElementById('timer-display').parentElement.classList.remove('animate-pulse');
             
-            playAudio(sfxTick); // SFX Detik sejak awal soal
+            playAudio(sfxTick); 
             
             clearInterval(timerInterval); timerInterval = setInterval(updateTimer, 1000);
         }
@@ -465,13 +501,11 @@
             selectedBtn.classList.remove('opacity-50');
             
             if (selectedIndex === q.a) {
-                highlightCorrect(selectedBtn);
-                playAudio(sfxRight); // SUARA BENAR
+                highlightCorrect(selectedBtn); playAudio(sfxRight);
                 const pointsEarned = 1000 + (timeLeft * 50); score += pointsEarned; animateScore(score);
                 showFeedback(true, `+${pointsEarned}`);
             } else {
-                highlightWrong(selectedBtn); highlightCorrect(buttons[q.a]); 
-                playAudio(sfxTimeout); // SUARA SALAH
+                highlightWrong(selectedBtn); highlightCorrect(buttons[q.a]); playAudio(sfxTimeout);
                 showFeedback(false, "Salah!");
             }
             setTimeout(nextQuestion, 1500);
@@ -488,12 +522,12 @@
         }
 
         function showFeedback(isCorrect, text) {
-            const container = document.getElementById('feedback-container'); const content = document.getElementById('feedback-content');
+            const container = document.getElementById('feedback-container');FEEDBACK_CONTENT = document.getElementById('feedback-content');
             container.classList.remove('hidden');
-            content.innerHTML = isCorrect 
+            FEEDBACK_CONTENT.innerHTML = isCorrect 
                 ? `<div class="bg-white rounded-full p-3 shadow-xl mb-2"><i class="fa-solid fa-check text-4xl text-green-500"></i></div><span class="font-black text-2xl text-green-600 drop-shadow-md">${text}</span>`
                 : `<div class="bg-white rounded-full p-3 shadow-xl mb-2"><i class="fa-solid fa-xmark text-4xl text-red-500"></i></div><span class="font-black text-2xl text-red-600 drop-shadow-md">${text}</span>`;
-            content.style.transform = 'scale(1)'; setTimeout(() => { container.classList.add('hidden'); content.style.transform = 'scale(1.5)'; }, 1300);
+            FEEDBACK_CONTENT.style.transform = 'scale(1)'; setTimeout(() => { container.classList.add('hidden'); FEEDBACK_CONTENT.style.transform = 'scale(1.5)'; }, 1300);
         }
 
         function animateScore(targetScore) {
@@ -509,7 +543,7 @@
         function nextQuestion() {
             currentQuestionIndex++;
             if (currentQuestionIndex < sessionQuestions.length) {
-                if(bgmGameplay.paused) playAudio(bgmGameplay); // Resume jika sempat timeout
+                if(bgmGameplay.paused) playAudio(bgmGameplay);
                 loadQuestion(); 
             } else {
                 endGame();
@@ -544,7 +578,6 @@
         }
 
         async function showLeaderboard() {
-            // Jika masuk dari tombol Home (sebelum main), hentikan musik opening sementara jika sedang menyala
             if(!document.getElementById('start-screen').classList.contains('hidden')) { stopAudio(bgmOpening); }
             
             document.getElementById('leaderboard-screen').classList.remove('hidden'); document.getElementById('leaderboard-screen').style.display = 'flex';
@@ -597,7 +630,6 @@
 
         function closeLeaderboard() { 
             document.getElementById('leaderboard-screen').classList.add('hidden'); document.getElementById('leaderboard-screen').style.display = 'none'; 
-            // Jika kembali ke Home Screen, nyalakan lagi musiknya
             if(!document.getElementById('start-screen').classList.contains('hidden') && audioInitialized) { playAudio(bgmOpening); }
         }
 
