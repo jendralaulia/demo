@@ -29,7 +29,7 @@
         .pulse-btn { animation: pulseBtn 1.5s infinite; }
         @keyframes pulseBtn { 0% { box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(250, 204, 21, 0); } 100% { box-shadow: 0 0 0 0 rgba(250, 204, 21, 0); } }
         
-        /* --- ANIMASI COUNTDOWN POP --- */
+        /* --- ANIMASI COUNTDOWN --- */
         @keyframes pop { 
             0% { transform: scale(0.5); opacity: 0; } 
             50% { transform: scale(1.2); opacity: 1; } 
@@ -76,16 +76,6 @@
             <button onclick="showLeaderboard()" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-2xl shadow-lg transition duration-200 transform hover:scale-[1.02] text-lg mt-3 flex justify-center items-center">
                 <i class="fa-solid fa-trophy mr-2"></i> Papan Skor
             </button>
-        </div>
-
-        <div id="countdown-screen" class="hidden absolute inset-0 bg-emerald-900 z-[100] flex flex-col items-center justify-center text-white h-full w-full">
-            <h1 id="countdown-title" class="text-2xl md:text-3xl text-emerald-200 mb-8 tracking-widest uppercase font-semibold transition-opacity duration-300">Siap-siap...</h1>
-            <div id="countdown-circle" class="relative flex items-center justify-center w-64 h-64 mx-auto rounded-full bg-emerald-800 shadow-[0_0_50px_rgba(16,185,129,0.5)] border-4 border-yellow-400/50 transition-opacity duration-300">
-                <span id="countdown-number" class="text-8xl md:text-9xl font-bold text-yellow-300 drop-shadow-[0_0_20px_rgba(253,224,71,0.8)] opacity-0">5</span>
-            </div>
-            <div id="countdown-message" class="hidden absolute inset-0 flex items-center justify-center bg-emerald-800 z-10">
-                <h2 class="text-6xl md:text-7xl font-extrabold text-yellow-300 animate-bounce drop-shadow-lg">MULAI!</h2>
-            </div>
         </div>
 
         <div id="game-screen" class="hidden flex-col h-full overflow-y-auto">
@@ -157,6 +147,16 @@
                 <button onclick="resetDatabase()" class="absolute right-4 top-4 text-emerald-800 hover:text-red-300" title="Reset Area (Admin Only)"><i class="fa-solid fa-trash-can"></i></button>
             </div>
             <div class="flex-grow overflow-y-auto p-4 custom-scrollbar" id="leaderboard-list"></div>
+        </div>
+    </div>
+
+    <div id="countdown-screen" class="fixed inset-0 bg-emerald-900 flex flex-col items-center justify-center text-white h-full w-full transition-opacity duration-300 opacity-0 pointer-events-none z-[-1]">
+        <h1 id="countdown-title" class="text-2xl md:text-3xl text-emerald-200 mb-8 tracking-widest uppercase font-semibold transition-opacity duration-300">Siap-siap...</h1>
+        <div id="countdown-circle" class="relative flex items-center justify-center w-64 h-64 mx-auto rounded-full bg-emerald-800 shadow-[0_0_50px_rgba(16,185,129,0.5)] border-4 border-yellow-400/50 transition-opacity duration-300">
+            <span id="countdown-number" class="text-8xl md:text-9xl font-bold text-yellow-300 drop-shadow-[0_0_20px_rgba(253,224,71,0.8)] opacity-0">5</span>
+        </div>
+        <div id="countdown-message" class="hidden absolute inset-0 flex items-center justify-center bg-emerald-800 z-10">
+            <h2 class="text-6xl md:text-7xl font-extrabold text-yellow-300 animate-bounce drop-shadow-lg">MULAI!</h2>
         </div>
     </div>
 
@@ -242,17 +242,24 @@
             startGame();
         }
 
-        // --- THE CLONE TRICK: ANTI GAGAL COUNTDOWN ---
+        // --- SOLUSI OPSI 1: COUNTDOWN TRANSPARAN ---
         function startGame() {
             currentQuestionIndex = 0; score = 0; document.getElementById('score-display').innerText = "0";
+            
+            // Sembunyikan Start Screen
             document.getElementById('start-screen').classList.add('hidden');
             
             const countdownScreen = document.getElementById('countdown-screen');
             const countdownTitle = document.getElementById('countdown-title');
             const countdownCircle = document.getElementById('countdown-circle');
+            const countdownNumber = document.getElementById('countdown-number');
             const countdownMessage = document.getElementById('countdown-message');
             
-            countdownScreen.classList.remove('hidden');
+            // Tembak Layar Jadi Nyata (Opsi 1)
+            countdownScreen.classList.replace('opacity-0', 'opacity-100');
+            countdownScreen.classList.replace('z-[-1]', 'z-[100]');
+            countdownScreen.classList.replace('pointer-events-none', 'pointer-events-auto');
+
             countdownMessage.classList.add('hidden');
             countdownTitle.style.opacity = '1';
             countdownCircle.style.opacity = '1';
@@ -260,26 +267,24 @@
             stopAudio(bgmOpening); 
             playAudio(sfxCountdown);
 
-            // Jeda 100ms agar browser tenang merender layar hijau, lalu kita serang pakai Kloning
+            let count = 5;
+            
+            // Fungsi pemanggil animasi
+            function triggerAnim(num) {
+                countdownNumber.innerText = num;
+                countdownNumber.classList.remove('animate-pop', 'opacity-0');
+                void countdownNumber.offsetWidth; 
+                countdownNumber.classList.add('animate-pop');
+            }
+
+            // Mulai berhitung setelah transisi opacity selesai
             setTimeout(() => {
-                let count = 5;
-                
-                // Fungsi mematikan elemen lama dan menggantinya dengan kembaran baru
-                function forcePopAnimation(num) {
-                    const oldEl = document.getElementById('countdown-number');
-                    const newEl = oldEl.cloneNode(true); // Kloning sempurna
-                    newEl.innerText = num;
-                    newEl.classList.remove('opacity-0');
-                    newEl.classList.add('animate-pop');
-                    oldEl.parentNode.replaceChild(newEl, oldEl); // Timpa!
-                }
-                
-                forcePopAnimation(count); // Tembak angka 5
+                triggerAnim(count);
 
                 const countInterval = setInterval(() => {
                     count--;
                     if(count > 0) {
-                        forcePopAnimation(count); // Tembak angka 4, 3, 2, 1
+                        triggerAnim(count);
                     } else {
                         clearInterval(countInterval);
                         countdownTitle.style.opacity = '0';
@@ -287,7 +292,12 @@
                         countdownMessage.classList.remove('hidden');
                         
                         setTimeout(() => {
-                            countdownScreen.classList.add('hidden');
+                            // Hilangkan layar countdown kembali ke transparan
+                            countdownScreen.classList.replace('opacity-100', 'opacity-0');
+                            countdownScreen.classList.replace('z-[100]', 'z-[-1]');
+                            countdownScreen.classList.replace('pointer-events-auto', 'pointer-events-none');
+                            
+                            // Masuk ke gameplay
                             document.getElementById('game-screen').classList.remove('hidden');
                             playAudio(bgmGameplay); 
                             loadQuestion();
