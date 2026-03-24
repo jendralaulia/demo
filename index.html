@@ -29,8 +29,12 @@
         .pulse-btn { animation: pulseBtn 1.5s infinite; }
         @keyframes pulseBtn { 0% { box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(250, 204, 21, 0); } 100% { box-shadow: 0 0 0 0 rgba(250, 204, 21, 0); } }
         
-        /* --- ANIMASI COUNTDOWN --- */
-        @keyframes pop { 0% { transform: scale(0.5); opacity: 0; } 50% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+        /* --- ANIMASI COUNTDOWN POP --- */
+        @keyframes pop { 
+            0% { transform: scale(0.5); opacity: 0; } 
+            50% { transform: scale(1.2); opacity: 1; } 
+            100% { transform: scale(1); opacity: 1; } 
+        }
         .animate-pop { animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         @keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(5deg); } }
         .animate-float { animation: float 3s ease-in-out infinite; }
@@ -184,7 +188,7 @@
             }
         }
         bgmOpening.addEventListener('canplaythrough', showEnterButton, { once: true });
-        setTimeout(showEnterButton, 3000); // Failsafe
+        setTimeout(showEnterButton, 3000); 
 
         function enterHome() {
             document.getElementById('loading-screen').style.opacity = "0";
@@ -238,12 +242,12 @@
             startGame();
         }
 
+        // --- THE CLONE TRICK: ANTI GAGAL COUNTDOWN ---
         function startGame() {
             currentQuestionIndex = 0; score = 0; document.getElementById('score-display').innerText = "0";
             document.getElementById('start-screen').classList.add('hidden');
             
             const countdownScreen = document.getElementById('countdown-screen');
-            const countdownNumber = document.getElementById('countdown-number');
             const countdownTitle = document.getElementById('countdown-title');
             const countdownCircle = document.getElementById('countdown-circle');
             const countdownMessage = document.getElementById('countdown-message');
@@ -256,23 +260,26 @@
             stopAudio(bgmOpening); 
             playAudio(sfxCountdown);
 
-            // Jeda 50ms agar browser render layar baru, BARU mulai animasi
+            // Jeda 100ms agar browser tenang merender layar hijau, lalu kita serang pakai Kloning
             setTimeout(() => {
                 let count = 5;
-                countdownNumber.innerText = count;
                 
-                function triggerAnim() {
-                    countdownNumber.classList.remove('animate-pop', 'opacity-0');
-                    void countdownNumber.offsetWidth; 
-                    countdownNumber.classList.add('animate-pop');
+                // Fungsi mematikan elemen lama dan menggantinya dengan kembaran baru
+                function forcePopAnimation(num) {
+                    const oldEl = document.getElementById('countdown-number');
+                    const newEl = oldEl.cloneNode(true); // Kloning sempurna
+                    newEl.innerText = num;
+                    newEl.classList.remove('opacity-0');
+                    newEl.classList.add('animate-pop');
+                    oldEl.parentNode.replaceChild(newEl, oldEl); // Timpa!
                 }
-                triggerAnim();
+                
+                forcePopAnimation(count); // Tembak angka 5
 
                 const countInterval = setInterval(() => {
                     count--;
                     if(count > 0) {
-                        countdownNumber.innerText = count;
-                        triggerAnim();
+                        forcePopAnimation(count); // Tembak angka 4, 3, 2, 1
                     } else {
                         clearInterval(countInterval);
                         countdownTitle.style.opacity = '0';
@@ -287,7 +294,7 @@
                         }, 800); 
                     }
                 }, 1000);
-            }, 50);
+            }, 100);
         }
 
         function loadQuestion() {
